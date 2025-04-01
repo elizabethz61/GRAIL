@@ -1,0 +1,71 @@
+<!-- example forums from report 2 discussion -->
+<!-- https://dribbble.com/shots/22641436-Social-Media-Forum -->
+<!-- https://dribbble.com/shots/7186002-Technical-forum-design -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAIL Forum</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="script.js"></script>
+</head>
+<body>
+    <header>
+        <!-- <div class="header__container">
+            <div class="header__content">
+                <div>
+                    <img class="header__logo" src="placeholder-logo.png" alt="GRAIL">
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="#">Resources</a></li>
+                        <li><a href="#">Help</a></li>
+                    </ul>
+                </nav>
+                
+                <input class="header__search" type="text" placeholder="Search...">
+                
+                <a href="#">User Info</a>
+            </div>
+        </div> -->
+    </header>
+    
+    <div class="container">
+        <div class="sidebar">
+            <a href="index.html" class="selected">Home</a>
+            <a href="questions.html?where=myquestions">My Questions</a>
+            <a href="questions.html?where=participation">My Participation</a>
+            <a href="questions.html?where=unsolved">Unsolved</a>
+            <a href="questions.html?where=solved">Solved</a>
+            <a href="questions.html?where=all">All</a>
+        </div>
+        
+        <div class="content">
+            <div class="question-box">
+                <h3>Notice Title</h3>
+                <p>Important announcement details...</p>
+            </div>
+            
+            <div class="question-box">
+                <h3>Ask A Question</h3>
+                <textarea rows="4" placeholder="Ask A Question..."></textarea>
+                <button type="button" class="gr-btn gr-primary question-box__submit gr-question-submit">Submit</button>
+            </div>
+            
+            <div class="question-box">
+                <h3>Some Question Title</h3>
+                <p>Short question description...</p>
+                <!-- slide open form/textarea below the question description on submit? -->
+                 <!-- or maybe instead of button have the little three dot menu with diff options like example sites -->
+                <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
