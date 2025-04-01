@@ -9,7 +9,7 @@ function initHeader() {
                 
                 <nav>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index/index.html">Home</a></li>
                         <li><a href="about.html">About</a></li>
                         <li><a href="#">Resources</a></li>
                         <li><a href="#">Help</a></li>

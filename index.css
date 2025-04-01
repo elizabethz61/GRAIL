@@ -5,6 +5,15 @@ body {
     /* background-color: #f5f5f5; */
 }
 
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
 header {
     background-color: #ddd;
 }
@@ -126,3 +135,38 @@ nav ul {
     border: 1px solid #ddd;
 }
 
+.gr-announcement {
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 24px;
+    position: relative;
+    height: 225px;
+    overflow: hidden;
+    border: 1px solid #f4f4f4;
+}
+
+.gr-announcement img {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+.gr-announcement--grail img {
+    top: -320px;
+}
+  
+.gr-announcement__content {
+    top: 0;
+    position: absolute;
+    left: 0;
+    margin: 24px 0;
+    padding: 0 48px;
+    bottom: 0;
+    align-content: center;
+}
+
+.gr-announcement--help .gr-announcement__content {
+    background-color: rgba(255, 255, 255, 0.86);
+}
