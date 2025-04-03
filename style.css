@@ -1,13 +1,7 @@
 :root {
-    /* filler color palette for now to get started on primary, secondary, text color etc. */
-    /* can change later */
-    /* --primary: #3C096C;
-    --primary-dark: #240046;
-    --secondary: #E0AAFF;
-    --text-color: white; */
-
-    --primary: #4A4E69;
-    --primary-dark: #22223B;
+    --primary: #9a4de2;
+    --primary-dark: #9000d3;
+    --primary-light: #d6d6fc;
     --secondary: #F2E9E4;
     --text-color: white;
     --text-color-secondary: black;
@@ -20,11 +14,21 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    /* background-color: #f5f5f5; */
+    height: 100vh;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-dark);
 }
 
 header {
-    background-color: #9a4de2;
+    background-color: var(--primary);
+    height: 70px;
 }
 
 .header__container {
@@ -52,6 +56,10 @@ header {
     height: 25px;
 }
 
+.header__search::placeholder {
+    color: var(--text-color);
+}
+
 .header__search:focus {
     outline: none !important;
     border: 1px solid #d9d9d9;
@@ -64,12 +72,10 @@ nav ul {
     gap: 15px;
 }
 
-/* nav a */
 .header__content a {
     text-decoration: none;
     color: #ffffff;
     padding: 8px 12px;
-    /* background-color: #eee; */
     border-radius: 5px;
     font-weight: bold;
 }
@@ -82,10 +88,8 @@ nav ul {
 
 .sidebar {
     width: 250px;
-    /* background: #fff; */
     padding: 15px 0;
     border-radius: 10px;
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 .sidebar button {
@@ -94,7 +98,6 @@ nav ul {
     padding: 10px;
     border: none;
     background-color: unset;
-    /* changed from #ddd */
     border-radius: 5px;
     cursor: pointer;
     
@@ -124,16 +127,14 @@ nav ul {
 .sidebar .selected {
     background-color: #ddd;
     border-radius: 0;
-    border-right: 5px solid rgb(144, 0, 211);
+    border-right: 5px solid var(--primary-dark);
 }
 
 .content {
     flex: 1;
     margin-left: 20px;
-    /* background: #fff; */
     padding: 20px;
     border-radius: 10px;
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 .question-box {
@@ -154,7 +155,6 @@ nav ul {
 .gr-btn {
     padding: 10px 12px;
     min-width: 120px;
-    /* border-radius: 5px; */
     border: 1px solid;
     border-radius: 5px;
     border-color: #d1d1d1;
@@ -163,13 +163,12 @@ nav ul {
 }
 
 .gr-primary {
-    background-color: #9a4de2;
+    background-color: var(--primary);
     color: white;
 }
 
 .gr-secondary {
-    background-color: rgb(214, 214, 252);
-    /* color: white; */
+    background-color: var(--primary-light)
 }
 
 textarea {
@@ -195,7 +194,8 @@ textarea:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Full height of the viewport */
+    height: calc(100% - 70px); /* Full height of the viewport */ 
+    /* updated to take into account header height */
     background-color: #f4f4f4; /* Light background for contrast */
 }
 
@@ -222,7 +222,7 @@ textarea:focus {
 .form-box button {
     width: 100%;
     padding: 10px;
-    background-color: #9a4de2;
+    background-color: var(--primary);
     color: white;
     border: none;
     border-radius: 5px;
@@ -231,7 +231,7 @@ textarea:focus {
 }
 
 .form-box button:hover {
-    background-color: #9a4de2;
+    background-color: var(--primary);
 }
 
 /* Link styling */
@@ -240,7 +240,7 @@ textarea:focus {
 }
 
 .form-box a {
-    color: #9a4de2;
+    color: var(--primary);
     text-decoration: none;
 }
 

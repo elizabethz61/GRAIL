@@ -1,61 +1,27 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-
-    console.log('index js!');
-
     initAnnouncements();
 });
 
 function initAnnouncements() {
-    var announcementsEl = document.querySelector('.gr-announcements');
+    var grailSlide = document.querySelector('.gr-announcement--grail ');
+    var helpSlide = document.querySelector('.gr-announcement--help');
 
-    if (!announcementsEl) {
+    if (!grailSlide || !helpSlide) {
         return;
     }
 
-    console.log('announcementsEl', announcementsEl);
-    
-    var announcementEls = announcementsEl.querySelectorAll('.gr-announcement');
-
-    if (!announcementEls) {
-        return;
-    }
-
-    console.log('announcementEls', announcementEls);
-
-    let currentIndex = 0;
+    // keep track whether to hide/display grail vs help slide
+    var reverse = false;
 
     function flipSlides() {
-        // const slideWidth = announcementEls[0].offsetWidth;
-        
-        // // Slide the whole slider container based on the current index
-        // announcementsEl.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        grailSlide.style.left = !reverse ? '-100%' : '0';
+        helpSlide.style.right = !reverse ? '0' : '-100%';
 
-        // // Hide slides that are not the current one
-        // announcementEls.forEach((slide, index) => {
-        //     if (index === currentIndex) {
-        //         slide.classList.remove('hidden');
-        //     } else {
-        //         slide.classList.add('hidden');
-        //     }
-        // });
+        reverse = !reverse;
     }
 
-    flipSlides();
-
-    // auto slide the banners
+    // flip the slides every 5 sec.
     setInterval(() => {
-        currentIndex = (currentIndex + 1) % announcementEls.length;
-        
         flipSlides();
-    }, 3000);
-
-    // var slides = [
-    //     {
-    //         title: 'Welcome To GRAIL!',
-    //         content: ''
-    //     }
-    // ]
-
-    // announcementsEl.innerHTML = ``;
+    }, 5000);
 }

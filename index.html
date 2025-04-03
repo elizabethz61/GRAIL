@@ -9,49 +9,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRAIL Forum</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="index.css">
 
+    <!-- <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAbFHd3lmb0Z8WYlbFV6elB2YzIQIk-uNI",
+          authDomain: "grail-mga.firebaseapp.com",
+          projectId: "grail-mga",
+          storageBucket: "grail-mga.firebasestorage.app",
+          messagingSenderId: "718774857777",
+          appId: "1:718774857777:web:f940906435844c3a93a510",
+          measurementId: "G-Z1BJ7XQPV2"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script> -->
+
+    <script src="index.js"></script>
     <script src="script.js"></script>
 </head>
 <body>
-    <header>
-         <div class="header__container">
-            <div class="header__content">
-                <div class="logo">
-                    <img src="images/placeholder-logo.png" alt="GRAIL Logo">
-                </div>
-                
-                <nav>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="#">Resources</a></li>
-                        <li><a href="#">Help</a></li>
-                    </ul>
-                </nav>
-                
-                <input class="header__search" type="text" placeholder="Search...">
-                
-                <a href="register.html">Register</a>
-            </div>
-        </div>
-    </header>
+    <header></header>
     
     <div class="container">
-        <div class="sidebar">
-            <a href="index.html" class="selected">Home</a>
-            <a href="questions.html?where=myquestions">My Questions</a>
-            <a href="questions.html?where=participation">My Participation</a>
-            <a href="questions.html?where=unsolved">Unsolved</a>
-            <a href="questions.html?where=solved">Solved</a>
-            <a href="questions.html?where=all">All</a>
-        </div>
+        <div class="sidebar"></div>
         
         <div class="content">
-            <div class="question-box">
-                <h3>Notice Title</h3>
-                <p>Important announcement details...</p>
+            <!-- todo - add btns to view certain slider not just through auto flip? -->
+            <div class="gr-announcements">
+                <div class="gr-announcements-container">
+                    <div class="gr-announcement gr-announcement--grail" style="left: 0;">
+                        <img src="https://images.pexels.com/photos/5706220/pexels-photo-5706220.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="GRAIL">
+                        
+                        <div class="gr-announcement__content">
+                            <h2>Welcome to GRAIL!</h2>
+
+                            <p>
+                                <strong>Knowledge, collaboration, and student growth.</strong> 
+                                Our mission is to inspire and promote learning and collaboration between students as they pursue knowledge and understanding.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="gr-announcement gr-announcement--help" style="right: -100%;">
+                        <img src="https://media.istockphoto.com/id/636957442/photo/shattering-glass-pieces-on-white.jpg?s=2048x2048&w=is&k=20&c=c5LfxdLpqAKVSSj-FqFVRXHePLkWMhLRg0kv8bnuu8c=" alt="Help">
+                        
+                        <div class="gr-announcement__content">
+                            <h2>Helpful Info</h2>
+
+                            <p>
+                                <strong>Need help getting started?</strong> 
+                                Click <a href="#">here</a> for FAQs and quick tutorials. 
+                                If further assistance is needed, please reach out to <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
+
             <div class="question-box">
                 <h3>Ask A Question</h3>
                 <textarea rows="4" placeholder="Ask A Question..."></textarea>

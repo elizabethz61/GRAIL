@@ -4,12 +4,12 @@ function initHeader() {
         <div class="header__container">
             <div class="header__content">
                 <div>
-                    <img class="header__logo" src="placeholder-logo.png" alt="GRAIL">
+                    <img class="header__logo" src="images/placeholder-logo.png" alt="GRAIL">
                 </div>
                 
                 <nav>
                     <ul>
-                        <li><a href="index/index.html">Home</a></li>
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="about.html">About</a></li>
                         <li><a href="#">Resources</a></li>
                         <li><a href="#">Help</a></li>
