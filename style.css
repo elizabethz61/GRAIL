@@ -189,3 +189,61 @@ textarea:focus {
     width: auto;
     display: block;
 }
+
+/* Center the login and register forms */
+.logincontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #f4f4f4; /* Light background for contrast */
+}
+
+/* Style the form box */
+.form-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+}
+
+/* Form inputs */
+.form-box input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Button styling */
+.form-box button {
+    width: 100%;
+    padding: 10px;
+    background-color: #9a4de2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.form-box button:hover {
+    background-color: #9a4de2;
+}
+
+/* Link styling */
+.form-box p {
+    margin-top: 10px;
+}
+
+.form-box a {
+    color: #9a4de2;
+    text-decoration: none;
+}
+
+.form-box a:hover {
+    text-decoration: underline;
+}
