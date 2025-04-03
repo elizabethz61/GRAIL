@@ -9,17 +9,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRAIL Forum</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="index.css">
 
     <script src="script.js"></script>
-    <script src="index.js"></script>
 </head>
 <body>
     <header>
-        <!-- <div class="header__container">
+         <div class="header__container">
             <div class="header__content">
-                <div>
-                    <img class="header__logo" src="placeholder-logo.png" alt="GRAIL">
+                <div class="logo">
+                    <img src="images/placeholder-logo.png" alt="GRAIL Logo">
                 </div>
                 
                 <nav>
@@ -33,48 +31,26 @@
                 
                 <input class="header__search" type="text" placeholder="Search...">
                 
-                <a href="#">User Info</a>
+                <a href="register.html">Register</a>
             </div>
-        </div> -->
+        </div>
     </header>
     
     <div class="container">
-        <div class="sidebar"></div>
+        <div class="sidebar">
+            <a href="index.html" class="selected">Home</a>
+            <a href="questions.html?where=myquestions">My Questions</a>
+            <a href="questions.html?where=participation">My Participation</a>
+            <a href="questions.html?where=unsolved">Unsolved</a>
+            <a href="questions.html?where=solved">Solved</a>
+            <a href="questions.html?where=all">All</a>
+        </div>
         
         <div class="content">
-            <!-- going to make this into a slider, but didn't get to the js yet -->
-            <div class="gr-announcements">
-                <div class="gr-announcements-container">
-                    <div class="gr-announcement gr-announcement--grail active">
-                        <img src="https://images.pexels.com/photos/5706220/pexels-photo-5706220.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="GRAIL">
-                        
-                        <div class="gr-announcement__content">
-                            <h2>Welcome to GRAIL!</h2>
-
-                            <p>
-                                <strong>Knowledge, collaboration, and student growth.</strong> 
-                                Our mission is to inspire and promote learning and collaboration between students as they pursue knowledge and understanding.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="gr-announcement gr-announcement--help">
-                        <img src="https://media.istockphoto.com/id/636957442/photo/shattering-glass-pieces-on-white.jpg?s=2048x2048&w=is&k=20&c=c5LfxdLpqAKVSSj-FqFVRXHePLkWMhLRg0kv8bnuu8c=" alt="Help">
-                        
-                        <div class="gr-announcement__content">
-                            <h2>Helpful Info</h2>
-
-                            <p>
-                                <strong>Need help getting started?</strong> 
-                                Click <a href="#">here</a> for FAQs and quick tutorials. 
-                                If further assistance is needed, please reach out to <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            <div class="question-box">
+                <h3>Notice Title</h3>
+                <p>Important announcement details...</p>
             </div>
-
-            
             
             <div class="question-box">
                 <h3>Ask A Question</h3>
