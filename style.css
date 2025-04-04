@@ -139,7 +139,7 @@ nav ul {
 
 .question-box {
     margin-bottom: 20px;
-    padding: 15px;
+    padding: 16px 24px;
     background: #fafafa;
     border-radius: 5px;
     border: 1px solid #ddd;
@@ -167,8 +167,16 @@ nav ul {
     color: white;
 }
 
+.gr-primary:hover {
+    background-color: var(--primary-dark);
+}
+
 .gr-secondary {
     background-color: var(--primary-light)
+}
+
+.gr-secondary:hover {
+    background-color: var(--primary)
 }
 
 textarea {
@@ -231,7 +239,7 @@ textarea:focus {
 }
 
 .form-box button:hover {
-    background-color: var(--primary);
+    background-color: var(--primary-dark);
 }
 
 /* Link styling */
