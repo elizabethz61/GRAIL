@@ -16,9 +16,17 @@ function initHeader() {
                     </ul>
                 </nav>
                 
-                <input class="header__search" type="text" placeholder="Search...">
+                <input type="text" class="header__search" type="text" placeholder="Search...">
                 
-                <a href="#">User Info</a>
+                ${window.location.href.indexOf('login.html') > -1 ? '<a href="register.html">Register</a>' : ''}
+                ${window.location.href.indexOf('register.html') > -1 ? '<a href="login.html">Login</a>' : ''}
+
+                ${
+                    window.location.href.indexOf('login.html') == -1 
+                    && window.location.href.indexOf('register.html') == -1 
+                    ? '<a href="#">User Info</a>'
+                    : ''
+                }
             </div>
         </div>
     `;
@@ -166,71 +174,203 @@ function initQuestionBoxes() {
     }
 }
 
+
+function initLogin() {
+    var loginEl = document.querySelector('#login-form');
+
+    if (!loginEl) {
+        return;
+    }
+
+    var submitEl = document.querySelector('button');
+
+    submitEl.addEventListener('click', ev => {
+        ev.preventDefault();
+
+        if (!loginEl.checkValidity()) {
+            loginEl.reportValidity();
+            return;
+        }
+
+        // get form data
+        const formData = new FormData(loginEl);
+        const input = Object.fromEntries(formData.entries());
+
+        var ref = firebase.database().ref('/users/' + input.username);            
+        ref.on('value', function (snapshot) {
+            const data = snapshot.val();
+
+            // if user does exist
+            // if creds are legit, redirect to index and store user in session storage
+            if (data && input.username == data.username && input.password == data.passkey) {
+                sessionStorage.setItem('user', JSON.stringify(data));
+
+                window.location.href = '/index.html';
+            } else { // if user doesn't exist - show error
+                document.querySelector('.gr-form__error').style.display = 'block';
+            }
+        }, function (error) {
+            console.log("Something went wrong logging user in: " + error.code);
+        });
+    });
+}
+
+function initRegister() {
+    var registerEl = document.querySelector('#register-form');
+    var passwordEl = document.querySelector('#password');
+    var confirmPasswordEl = document.querySelector('#confirm-password');
+    var usernameEl = document.querySelector('#username');
+
+    if (!registerEl || !confirmPasswordEl || !passwordEl || !usernameEl) {
+        return;
+    }
+
+    confirmPasswordEl.addEventListener('change', ev => {
+        if (confirmPasswordEl.value != passwordEl.value) {
+            confirmPasswordEl.setCustomValidity('Password does not match.');
+            confirmPasswordEl.reportValidity();
+        } else {
+            confirmPasswordEl.setCustomValidity('');
+        }
+    });
+
+    usernameEl.addEventListener('input', ev => {
+        if (/[^A-Za-z0-9 ]/.test(usernameEl.value)) {
+            console.log('confirmPasswordEl.value ', usernameEl.value);
+
+            usernameEl.setCustomValidity('Username must not contain special characters.');
+            usernameEl.reportValidity();
+        } else {
+            usernameEl.setCustomValidity('');
+        }
+    });
+    
+    registerEl.addEventListener('submit', ev => {
+        ev.preventDefault();
+
+        // get data from form as object
+        const formData = new FormData(registerEl);
+        const input = Object.fromEntries(formData.entries());
+
+        var first = true;
+
+        // check if username already exists in firebase
+        var ref = firebase.database().ref('/users/' + input.username);            
+        ref.once('value', function (snapshot) {
+            const data = snapshot.val();
+
+            console.log('data', data);
+
+            // if user does exist
+            if (first) {
+                if (data && input.username == data.username) {
+                    document.querySelector('.gr-form__error').style.display = 'block';
+                    document.querySelector('.gr-form__success').style.display = 'none';
+                } else {
+                    document.querySelector('.gr-form__error').style.display = 'none';
+
+                    firebase.database().ref('users/' + input.username).set({
+                        username: input.username,
+                        email: input.email,
+                        name: null, // will be able to set later in profile or sum
+                        role: 'student', // student by default, can add mod flow later
+                        passkey: input.password
+                    }, (error) => {
+                        if (error) {
+                            // The write failed...
+                            console.log('Error registering user: ', error);
+                        } else {
+                            document.querySelector('.gr-form__success').style.display = 'block';
+                        }
+                    });
+                }
+            }
+
+            first = false;
+        }, function (error) {
+            console.log("Something went wrong registering user: " + error.code);
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
-        console.log('hello!');
+    // get current user from session
+    var currentUser = sessionStorage.user ? JSON.parse(sessionStorage.user) : null;
 
-        // load header in js so we dont need to add the same html to each page?
-        initHeader();
+    // if there is no current user, redirect them to the login screen
+    if (!currentUser && (window.location.href.indexOf('register.html') == -1 && window.location.href.indexOf('login.html') == -1)) {
+        window.location.href = '/login.html';
+    }
 
-        initQuestionBoxes();
+    // FIREBASE
+    var firebaseConfig = {
+        apiKey: "AIzaSyAbFHd3lmb0Z8WYlbFV6elB2YzIQIk-uNI",
+        authDomain: "grail-mga.firebaseapp.com",
+        projectId: "grail-mga",
+        storageBucket: "grail-mga.firebasestorage.app",
+        messagingSenderId: "718774857777",
+        appId: "1:718774857777:web:f940906435844c3a93a510",
+        measurementId: "G-Z1BJ7XQPV2",
+        databaseURL: "https://grail-mga-default-rtdb.firebaseio.com"
+    };
 
-        initSidebar();
+    // initialize
+    firebase.initializeApp(firebaseConfig);
 
+    // get the database
+    var database = firebase.database();
 
-        // FIREBASE
-        var firebaseConfig = {
-            apiKey: "AIzaSyAbFHd3lmb0Z8WYlbFV6elB2YzIQIk-uNI",
-            authDomain: "grail-mga.firebaseapp.com",
-            projectId: "grail-mga",
-            storageBucket: "grail-mga.firebasestorage.app",
-            messagingSenderId: "718774857777",
-            appId: "1:718774857777:web:f940906435844c3a93a510",
-            measurementId: "G-Z1BJ7XQPV2",
-            databaseURL: "https://grail-mga-default-rtdb.firebaseio.com"
-        };
+    // doc on how to structure data -> https://firebase.google.com/docs/database/web/structure-data
 
-        // initialize
-        firebase.initializeApp(firebaseConfig);
+    // so far we'll need three data objects
+    // 1. questions
+    // 2. answers
+    // 3. users
 
-        // get the database
-        var database = firebase.database();
+    // will store in flattened data structure like in doc example
 
-        // doc on how to structure data -> https://firebase.google.com/docs/database/web/structure-data
+    // example user data for now, can add other attributes later
+    // this is just to get started
+    // {
+    //     username: 'eljzakula',
+    //     email: 'eljzakula@gmail.com',
+    //     superuser: true
+    // }
 
-        // so far we'll need three data objects
-        // 1. questions
-        // 2. answers
-        // 3. users
+    // each user key will have to be their username
 
-        // will store in flattened data structure like in doc example
+    // doc how to write data to database -> https://firebase.google.com/docs/database/web/read-and-write#web_1
 
-        // example user data for now, can add other attributes later
-        // this is just to get started
-        // {
-        //     username: 'eljzakula',
-        //     email: 'eljzakula@gmail.com',
-        //     superuser: true
-        // }
+    // note: using set function overrites data if it currently exists
+    if (false) { // working example how to set data in database
+        firebase.database().ref('users/' + 'eljzakula').set({
+            username: 'eljzakula',
+            email: 'eljzakula@gmail.com',
+            superuser: true
+        }, (error) => {
+            if (error) {
+                // The write failed...
+                console.log('error setting data', error);
+            } else {
+                // Data saved successfully!
+                console.log('data saved');
+            }
+        });
+    }
 
-        // each user key will have to be their username
+    // load header in js so we dont need to add the same html to each page
+    initHeader();
 
-        // doc how to write data to database -> https://firebase.google.com/docs/database/web/read-and-write#web_1
+    initQuestionBoxes();
 
-        // note: using set function overrites data if it currently exists
-        if (false) { // working example how to set data in database
-            firebase.database().ref('users/' + 'eljzakula').set({
-                username: 'eljzakula',
-                email: 'eljzakula@gmail.com',
-                superuser: true
-            }, (error) => {
-                if (error) {
-                    // The write failed...
-                    console.log('error setting data', error);
-                } else {
-                    // Data saved successfully!
-                    console.log('data saved');
-                }
-            });
-        }
+    initSidebar();
+
+    if (window.location.href.indexOf('login.html') > -1) {
+        initLogin();
+    }
+
+    if (window.location.href.indexOf('register.html') > -1) {
+        initRegister();
+    }
 });
