@@ -1,0 +1,553 @@
+:root {
+    --primary: #9a4de2;
+    --primary-dark: #9000d3;
+    --primary-light: #d6d6fc;
+    --secondary: #F2E9E4;
+    --text-color: white;
+    --text-color-secondary: black;
+
+    /* color palette generator: https://coolors.co/palette/10002b-240046-3c096c-5a189a-7b2cbf-9d4edd-c77dff-e0aaff */
+    /* https://coolors.co/palette/22223b-4a4e69-9a8c98-c9ada7-f2e9e4 */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrolling but allow vertical */
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+input:focus {
+    outline: 1px solid #d4d4d4;;
+}
+
+header {
+    background-color: var(--primary);
+    height: 80px; /* Increased from 70px to 80px */
+    overflow: visible; /* Allow content to overflow if needed */
+    position: relative; /* Create a stacking context */
+}
+
+.header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 100%;
+}
+
+.header__logo {
+    width: 150px;
+}
+
+.header__search {
+    background-color: unset;
+    border: 1px solid #ffffff;
+    padding: 6px;
+    width: 300px;
+    border-radius: 5px;
+    height: 25px;
+}
+
+.header__search::placeholder {
+    color: var(--text-color);
+}
+
+.header__search:focus {
+    outline: none !important;
+    border: 1px solid #fffdfd;
+}
+
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000; /* Ensure it's above other elements */
+    position: relative;
+    height: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; /* Add this to remove default margin */
+    display: flex;
+    gap: 15px;
+    align-items: center; /* Ensure vertical alignment */
+}
+
+nav ul li {
+    display: flex; /* Ensure consistent sizing */
+    align-items: center;
+}
+
+.header__content a {
+    text-decoration: none;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.sidebar {
+    width: 250px;
+    padding: 15px 0;
+    border-radius: 10px;
+    margin-left: -300px; /* Shift the sidebar further to the left */
+}
+
+.sidebar button {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    background-color: unset;
+    border-radius: 15px; /* Rounded square effect */
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 24px;
+}
+
+.sidebar a {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    background-color: unset;
+    border-radius: 15px; /* Rounded square effect */
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 24px;
+    display: flex;
+    text-decoration: none;
+    color: black;
+    font-size: 14px;
+}
+
+.sidebar .selected {
+    background-color: #ddd;
+    border-radius: 0;
+    border-right: 5px solid var(--primary-dark);
+}
+
+.content {
+    flex: 1;
+    margin-left: 20px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.question-box {
+    margin-bottom: 20px;
+    padding: 16px 24px;
+    background: #fafafa;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.question-box__submit,
+.gr-answer {
+    display: flex;
+    margin-left: auto;
+    justify-content: center;
+}
+
+.gr-btn {
+    padding: 10px 12px;
+    min-width: 120px;
+    border: 1px solid;
+    border-radius: 5px;
+    border-color: #d1d1d1;
+    margin-top: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gr-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.gr-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.gr-secondary {
+    background-color: var(--primary-light)
+}
+
+.gr-secondary:hover {
+    background-color: var(--primary)
+}
+
+textarea {
+    border: 1px solid #f4f4f4;
+    border-radius: 3px;
+    padding: 12px;
+    font-family: inherit;
+    width: -webkit-fill-available;
+}
+
+textarea:focus {
+    outline: 1px solid #d4d4d4;;
+}
+
+.logo img {
+    height: 60px; /* Increased from 50px to 60px */
+    width: auto;
+    display: block;
+}
+
+/* Center the login and register forms */
+.logincontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Updated to match header height */
+    background-color: #f4f4f4;
+}
+
+/* Style the form box */
+.form-box {
+    background: white;
+    padding: 40px; /* Increased padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Form elements styling */
+.form-box h1 {
+    margin: 0 0 24px 0;
+    color: inherit;
+}
+
+.form-box form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 0; /* Remove margin, use gap instead */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+.form-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.form-box p {
+    margin: 24px 0 0 0;
+}
+
+.form-box .gr-form__error,
+.form-box .gr-form__success {
+    margin-top: 24px;
+    width: 100%;
+}
+
+/* Button styling */
+.form-box button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.form-box button:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Link styling */
+.form-box p {
+    margin-top: 10px;
+}
+
+.form-box a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.form-box a:hover {
+    text-decoration: underline;
+}
+
+
+.gr-error {
+    color: red;
+    display: block;
+    font-size: 12px;
+    padding: 3px 6px;
+}
+
+.gr-form__error {
+    padding: 24px;
+    background-color: #ffe4e4;
+    color: #910000;
+    border-radius: 3px;
+    margin-top: 24px;
+}
+
+.gr-form__success {
+    padding: 24px;
+    background-color: #e9ffe9;
+    color: #003c00;
+    border-radius: 3px;
+    margin-top: 24px;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 2px solid white;
+    cursor: pointer;
+    font-size: 22px;
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1010;
+    transition: all 0.3s;
+    margin-left: 15px;
+    position: relative;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.dark-mode-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.dark-mode-toggle__icon {
+    transition: transform 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .dark-mode-toggle {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .dark-mode-toggle__icon {
+    transform: rotate(180deg);
+}
+
+/* Dark mode content styles */
+body.dark-mode .question-box,
+body.dark-mode .form-box {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+body.dark-mode .question-entry {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark-mode .question-entry__title,
+body.dark-mode .form-box {
+    color: #e0e0e0;
+}
+
+body.dark-mode .question-entry__meta {
+    color: #b0b0b0;
+}
+
+/* Dark mode form styles */
+body.dark-mode .gr-form input,
+body.dark-mode .gr-form select,
+body.dark-mode .form-box input,
+body.dark-mode textarea {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .gr-form input::placeholder,
+body.dark-mode .gr-form select::placeholder,
+body.dark-mode .form-box input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #999;
+}
+
+/* Dark mode navigation/sidebar */
+body.dark-mode .sidebar .selected {
+    background-color: #333;
+}
+
+body.dark-mode .header__search {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #e0e0e0;
+}
+
+body.dark-mode .header__search::placeholder {
+    color: #ffffff;
+}
+
+/* Dark mode buttons */
+body.dark-mode .gr-secondary {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .gr-secondary:hover {
+    background-color: #555;
+}
+
+/* Dark mode links */
+body.dark-mode a {
+    color: var(--primary-light);
+}
+
+body.dark-mode a:hover {
+    color: var(--primary);
+}
+
+/* Make header links/buttons more visible in dark mode */
+body.dark-mode .header__content a {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .header__content a:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.logo a {
+    display: block;
+    text-decoration: none;
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    padding: 0; /* Remove padding */
+}
+
+.logo a:hover {
+    opacity: 0.9;
+    background-color: transparent; /* Ensure no background on hover */
+    border: none; /* Ensure no border on hover */
+}
+
+/* Fix for dark mode */
+body.dark-mode .logo a {
+    background-color: transparent; /* Ensure no background in dark mode */
+    border: none; /* Ensure no border in dark mode */
+}
+
+body.dark-mode .logo a:hover {
+    background-color: transparent; /* Ensure no background on hover in dark mode */
+    border: none; /* Ensure no border on hover in dark mode */
+}
+
+/* Ensure logo image has consistent size */
+.logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+/* Make header links/buttons more visible in dark mode */
+body.dark-mode .header__content a {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode .header__content a:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+/* Also adjust the nav menu items with more specific styling */
+body.dark-mode nav ul li a {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure the dark mode toggle is clearly visible */
+body.dark-mode .dark-mode-toggle {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Add these dark mode styles for login/register pages */
+body.dark-mode .logincontainer {
+    background-color: #1a1a1a; /* Dark background for the login container */
+}
+
+body.dark-mode .form-box {
+    background: #2a2a2a; /* Darker background for the form box */
+    color: #e0e0e0; /* Light text color */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Adjusted shadow for dark mode */
+}
+
+body.dark-mode .form-box h2 {
+    color: #e0e0e0; /* Ensure headings are visible */
+}
+
+body.dark-mode .form-box p {
+    color: #ccc; /* Lighter color for paragraphs */
+}
+
+/* Ensure error messages are visible in dark mode */
+body.dark-mode .form-box .gr-error {
+    color: #ff6b6b; /* Brighter red for errors in dark mode */
+}

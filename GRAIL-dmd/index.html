@@ -1,0 +1,199 @@
+<!-- example forums from report 2 discussion -->
+<!-- https://dribbble.com/shots/22641436-Social-Media-Forum -->
+<!-- https://dribbble.com/shots/7186002-Technical-forum-design -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAIL Forum</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="index.css">
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+
+    <script src="index.js"></script>
+    <script src="script.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header__container">
+            <div class="header__content">
+                <div class="logo">
+                    <img src="images/logo.png" alt="GRAIL Logo">
+                </div>
+                <div class="header__search-container">
+                    <input type="text" class="header__search" placeholder="Search questions...">
+                </div>
+                <div class="header__actions">
+                    <nav>
+                        <ul>
+                            <li><a href="login.html">Login</a></li>
+                            <li><a href="register.html">Register</a></li>
+                        </ul>
+                    </nav>
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                        <span class="dark-mode-toggle__icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="sidebar"></div>
+        
+        <div class="content">
+            <!-- todo - add btns to view certain slider not just through auto flip? -->
+            <div class="gr-announcements">
+                <div class="gr-announcements-container">
+                    <div class="gr-announcement gr-announcement--grail" style="left: 0;">
+                        <img src="https://images.pexels.com/photos/5706220/pexels-photo-5706220.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="GRAIL">
+                        
+                        <div class="gr-announcement__content">
+                            <h2>Welcome to GRAIL!</h2>
+
+                            <p>
+                                <strong>Knowledge, collaboration, and student growth.</strong> 
+                                Our mission is to inspire and promote learning and collaboration between students as they pursue knowledge and understanding.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="gr-announcement gr-announcement--help" style="right: -100%;">
+                        <img src="https://media.istockphoto.com/id/636957442/photo/shattering-glass-pieces-on-white.jpg?s=2048x2048&w=is&k=20&c=c5LfxdLpqAKVSSj-FqFVRXHePLkWMhLRg0kv8bnuu8c=" alt="Help">
+                        
+                        <div class="gr-announcement__content">
+                            <h2>Helpful Info</h2>
+
+                            <p>
+                                <strong>Need help getting started?</strong> 
+                                Click <a href="#">here</a> for FAQs and quick tutorials. 
+                                If further assistance is needed, please reach out to <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Replace the original "Some Question Title" box with this updated structure -->
+            <div class="question-box">
+                <h3>Recent Questions</h3>
+                
+                <div class="question-entries">
+                    <!-- Individual question entries -->
+                    <div class="question-entry">
+                        <h4 class="question-entry__title">How to implement a binary search tree?</h4>
+                        <div class="question-entry__meta">
+                            <span class="question-entry__subject">Computer Science</span>
+                            <span class="question-entry__duedate">Due: Apr 12, 2025</span>
+                        </div>
+                        <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+                    </div>
+                    
+                    <div class="question-entry">
+                        <h4 class="question-entry__title">Calculate the limit as x approaches infinity</h4>
+                        <div class="question-entry__meta">
+                            <span class="question-entry__subject">Mathematics</span>
+                            <span class="question-entry__duedate">Due: Apr 10, 2025</span>
+                        </div>
+                        <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+                    </div>
+                    
+                    <div class="question-entry">
+                        <h4 class="question-entry__title">Explain the principles of object-oriented design</h4>
+                        <div class="question-entry__meta">
+                            <span class="question-entry__subject">Engineering</span>
+                            <span class="question-entry__duedate">Due: Apr 15, 2025</span>
+                        </div>
+                        <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-box">
+                <h3>Ask A Question</h3>
+                
+                <form class="gr-form gr-question">
+                    <div class="gr-form__row">
+                        <div class="gr-form__item">
+                            <label for="name">Question Title</label>
+                            <input type="text" name="title" required>
+
+                            <span class="gr-error" style="display: none;">Please enter a title</span>
+                        </div>
+
+                        <div class="gr-form__item">
+                            <label for="subject">Subject</label>
+                            <select name="subject" required>
+                                <option value="">---</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Science">Science</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Business">Business</option>
+                                <option value="Social Sciences">Social Sciences</option>
+                                <option value="Humanities">Humanities</option>
+                                <option value="Arts">Arts</option>
+                                <option value="Languages">Languages</option>
+                                <option value="Law">Law</option>
+                                <option value="Education">Education</option>
+                                <option value="Health Sciences">Health Sciences</option>
+                                <option value="Communication">Communication</option> 
+                            </select>
+
+                            <span class="gr-error" style="display: none;">Please select a subject</span>
+                        </div>
+                    </div>
+
+                    <div class="gr-form__row">
+                        <div class="gr-form__item">
+                            <label for="course">Course/Course Number</label>
+                            <select name="course" required>
+                                <option value="">---</option>
+                                <option value="ITEC2260">ITEC 2260 - Intro to Computer Programming</option>
+                                <option value="ITEC2270">ITEC 2270 - Application Development</option>
+                                <option value="ITEC3155">ITEC 3155 - Systems Analysis and Design</option>
+                                <option value="ITEC3235">ITEC 3235 - Human Computer Interaction</option>
+                                <option value="ITEC4261">ITEC 4261 - Intro to JAVA Programming</option>
+                                <option value="ITEC4264">ITEC 4264 - Data Structures</option>
+                            </select>
+
+                            <span class="gr-error" style="display: none;">Please select a course</span>
+                        </div>
+
+                        <div class="gr-form__item">
+                            <label for="dueDate">Due Date</label>
+                            <input type="date" name="dueDate">
+                        </div>
+                    </div>
+
+                    <div class="gr-form__row">
+                        <div class="gr-form__item">
+                            <label for="content">Question</label>
+                            <textarea name="content" rows="4" required></textarea>
+
+                            <span class="gr-error" style="display: none;">Please enter your question</span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="gr-btn gr-primary question-box__submit gr-question__submit">Submit</button>
+
+                    <div class="gr-form__error" style="display: none;">
+                        Something went wrong, please try again. 
+                        If the issue persists, please contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>.
+                    </div>
+
+                    <div class="gr-form__success" style="display: none;">
+                        Success! Your question has been submitted, please navigate to <a href="questions.html?where=myquestions">My Questions</a> if you'd like to view it.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
