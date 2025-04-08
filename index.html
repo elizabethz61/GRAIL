@@ -17,9 +17,32 @@
 
     <script src="index.js"></script>
     <script src="script.js"></script>
+    <script src="darkmode.js"></script>
 </head>
 <body>
-    <header></header>
+    <header>
+        <div class="header__container">
+            <div class="header__content">
+                <div class="logo">
+                    <img src="images/logo.png" alt="GRAIL Logo">
+                </div>
+                <div class="header__search-container">
+                    <input type="text" class="header__search" placeholder="Search questions...">
+                </div>
+                <div class="header__actions">
+                    <nav>
+                        <ul>
+                            <li><a href="login.html">Login</a></li>
+                            <li><a href="register.html">Register</a></li>
+                        </ul>
+                    </nav>
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                        <span class="dark-mode-toggle__icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
     
     <div class="container">
         <div class="sidebar"></div>
@@ -57,6 +80,41 @@
                 </div>
             </div>
 
+            <!-- Replace the original "Some Question Title" box with this updated structure -->
+            <div class="question-box">
+                <h3>Recent Questions</h3>
+                
+                <div class="question-entries">
+                    <!-- Individual question entries -->
+                    <div class="question-entry">
+                        <h4 class="question-entry__title">How to implement a binary search tree?</h4>
+                        <div class="question-entry__meta">
+                            <span class="question-entry__subject">Computer Science</span>
+                            <span class="question-entry__duedate">Due: Apr 12, 2025</span>
+                        </div>
+                        <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+                    </div>
+                    
+                    <div class="question-entry">
+                        <h4 class="question-entry__title">Calculate the limit as x approaches infinity</h4>
+                        <div class="question-entry__meta">
+                            <span class="question-entry__subject">Mathematics</span>
+                            <span class="question-entry__duedate">Due: Apr 10, 2025</span>
+                        </div>
+                        <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+                    </div>
+                    
+                    <div class="question-entry">
+                        <h4 class="question-entry__title">Explain the principles of object-oriented design</h4>
+                        <div class="question-entry__meta">
+                            <span class="question-entry__subject">Engineering</span>
+                            <span class="question-entry__duedate">Due: Apr 15, 2025</span>
+                        </div>
+                        <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="question-box">
                 <h3>Ask A Question</h3>
                 
@@ -134,14 +192,6 @@
                         Success! Your question has been submitted, please navigate to <a href="questions.html?where=myquestions">My Questions</a> if you'd like to view it.
                     </div>
                 </form>
-            </div>
-            
-            <div class="question-box">
-                <h3>Some Question Title</h3>
-                <p>Short question description...</p>
-                <!-- slide open form/textarea below the question description on submit? -->
-                 <!-- or maybe instead of button have the little three dot menu with diff options like example sites -->
-                <button type="button" class="gr-btn gr-secondary gr-answer">Answer</button>
             </div>
         </div>
     </div>

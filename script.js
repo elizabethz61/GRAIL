@@ -3,6 +3,33 @@ function initHeader() {
     var headerHtml = `
         <div class="header__container">
             <div class="header__content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/placeholder-logo.png" alt="GRAIL Logo">
+                    </a>
+                </div>
+                <div class="header__search-container">
+                    <input type="text" class="header__search" placeholder="Search questions...">
+                </div>
+                <div class="header__actions">
+                    <nav>
+                        <ul>
+                            <li><a href="login.html">Login</a></li>
+                            <li><a href="register.html">Register</a></li>
+                            <li><a href="about.html">About</a></li>
+                        </ul>
+                    </nav>
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                        <span class="dark-mode-toggle__icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    var previousHtml = `
+        <div class="header__container">
+            <div class="header__content">
                 <div>
                     <img class="header__logo" src="images/placeholder-logo.png" alt="GRAIL">
                 </div>
