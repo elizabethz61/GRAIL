@@ -1,7 +1,6 @@
 .gr-announcements-container {
     height: 225px;
     position: relative;
-    margin-bottom: 36px;
     overflow: hidden;
     border: 1px solid #f4f4f4;
     border-radius: 5px;
@@ -38,6 +37,7 @@
     padding: 0 48px;
     bottom: 0;
     align-content: center;
+    color: black;
 }
 
 .gr-announcement--help .gr-announcement__content {
@@ -95,7 +95,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-top: 16px;
+    margin: 16px 0;
 }
 
 .question-entry {
@@ -104,6 +104,9 @@
     border-radius: 8px;
     padding: 12px 16px;
     position: relative;
+
+    display: flex;
+    flex-direction: row;
 }
 
 .question-entry__title {
@@ -112,27 +115,42 @@
     color: var(--text-color-secondary);
 }
 
-.question-entry__meta {
+.question-entry__actions {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    text-align: right;
+}
+
+.question-entry__info {
+    display: flex;
+    flex-direction: column;
+}
+
+/* .question-entry__meta {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
     color: #666;
     margin-bottom: 12px;
-}
+} */
 
 .question-entry__subject {
     font-weight: bold;
+    font-size: 12px;
 }
 
 .question-entry__duedate {
     color: #d04444;
+    font-size: 12px;
+    /* made smaller so it looks a litle better */
 }
 
 .question-entry .gr-btn {
-    position: absolute;
+    /* position: absolute;
     right: 16px;
     top: 12px;
-    margin: 0;
+    margin: 0; */
     padding: 6px 10px;
     min-width: auto;
     font-size: 12px;

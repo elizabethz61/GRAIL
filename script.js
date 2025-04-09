@@ -174,6 +174,7 @@ function initQuestionBoxes() {
                     course: input['course'],
                     dueDate: input['dueDate'],
                     content: input['content'],
+                    status: 'Unsolved',
                     authorID: currentUser.username,
                     timestamp: Date.now()
                 }, (error) => {
@@ -201,6 +202,16 @@ function initQuestionBoxes() {
     }
 }
 
+function initDarkMode() {
+    console.log('ch')
+    var js = document.createElement("script");
+    
+    js.src = 'darkmode.js';
+
+    console.log('ch')
+    document.body.appendChild(js);
+}
+
 
 function initLogin() {
     var loginEl = document.querySelector('#login-form');
@@ -209,9 +220,7 @@ function initLogin() {
         return;
     }
 
-    var submitEl = document.querySelector('button');
-
-    submitEl.addEventListener('click', ev => {
+    loginEl.addEventListener('submit', ev => {
         ev.preventDefault();
 
         if (!loginEl.checkValidity()) {
@@ -230,7 +239,7 @@ function initLogin() {
             // if user does exist
             // if creds are legit, redirect to index and store user in session storage
             if (data && input.username == data.username && input.password == data.passkey) {
-                sessionStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('user', JSON.stringify(data));
 
                 window.location.href = '/index.html';
             } else { // if user doesn't exist - show error
@@ -320,10 +329,97 @@ function initRegister() {
     });
 }
 
+function initQuestions() {
+    var questionBoxEl = document.querySelector('.qr-questions');
+    var questionEntriesEl = document.querySelector('.gr-question__entries');
+
+    if (!questionBoxEl || !questionEntriesEl) {
+        return;
+    }
+
+    // get 3 latest questions
+    var ref = firebase.database().ref('/posts').orderByChild('timestamp').limitToLast(3);
+    ref.on('value', function (snapshot) {
+        const data = snapshot.val();
+
+        if (data) {
+            questionEntriesEl.innerHTML = Object.keys(data).map(key => {
+                var date = 'N/A';
+
+                // format the date nicely for user display
+                if (data[key].dueDate) {
+                    var dateSplits = data[key].dueDate.split('-');
+
+                    switch(dateSplits[1]) {
+                        case '01':
+                            date = 'January';
+                            break;
+                        case '02':
+                            date = 'February';
+                            break;
+                        case '03':
+                            date = 'March';
+                            break;
+                        case '04':
+                            date = 'April';
+                            break;
+                        case '05':
+                            date = 'May';
+                            break;
+                        case '06':
+                            date = 'June';
+                            break;
+                        case '07':
+                            date = 'July';
+                            break;
+                        case '08':
+                            date = 'August';
+                            break;
+                        case '09':
+                            date = 'September';
+                            break;
+                        case '10':
+                            date = 'October';
+                            break;
+                        case '11':
+                            date = 'November';
+                            break;
+                        case '12':
+                            date = 'December';
+                            break;
+                    }
+
+                    date += ' ' + dateSplits[2] + ', ';
+
+                    date += dateSplits[0];
+                }
+                
+                return `
+                    <div class="question-entry">
+                        <div class="question-entry__info">
+                            <h4 class="question-entry__title">${data[key].title || 'Untitled'}</h4>
+                            <span class="question-entry__subject">${data[key].subject}</span>
+                        </div>
+                        
+                        <div class="question-entry__actions">
+                            <span class="question-entry__duedate">Due: ${date}</span>
+                            <a href="/question.html?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
+                        </div>
+                    </div>
+                `
+            }).join('');
+
+            questionBoxEl.style.display = 'block';
+        }
+    }, function (error) {
+        console.log("Something went wrong logging user in: " + error.code);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // get current user from session
-    var currentUser = sessionStorage.user ? JSON.parse(sessionStorage.user) : null;
+    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
 
     // if there is no current user, redirect them to the login screen
     if (!currentUser && (window.location.href.indexOf('register.html') == -1 && window.location.href.indexOf('login.html') == -1)) {
@@ -400,4 +496,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.href.indexOf('register.html') > -1) {
         initRegister();
     }
+
+    // only for the index page
+    // init recent questions box
+    if (window.location.href.indexOf('index.html') > -1) {
+        initQuestions();
+    }
+
+    initDarkMode();
 });
