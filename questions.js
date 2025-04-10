@@ -215,30 +215,32 @@ function initSingleQuestion() {
     answersRef.once('value', function (snapshot) {
         const data = snapshot.val();
 
+        var html = ``;
+        
         if (data && Object.keys(data) && Object.keys(data).length > 0) {
-            var html = ``;
-            
             // display how many answers exist currently
-            html += `
+                html += `
                 <h3>${Object.keys(data).length > 1 ? Object.keys(data).length + ' Answers' : Object.keys(data).length + ' Answer'}</h3>
             `;
+        }
 
-            // add form for user to submit their own answer
-            html += `
-                <form class="content__answer content__answer-form">
-                    <h4 class="content__answer-title">
-                        Reply
-                    </h4>
+        // add form for user to submit their own answer
+        html += `
+            <form class="content__answer content__answer-form">
+                <h4 class="content__answer-title">
+                    Reply
+                </h4>
 
-                    <textarea name="content" rows="4" required></textarea>
+                <textarea name="content" rows="4" required></textarea>
 
-                    <button class="gr-btn gr-primary" type="button">Answer</button>
+                <button class="gr-btn gr-primary" type="button">Answer</button>
 
-                    <span class="gr-form__error" style="display: none;">Please enter your answer</span>
-                    <span class="gr-form__success" style="display: none;">Success! Please refresh the page to see your answer.</span>
-                </form>
-            `;
+                <span class="gr-form__error" style="display: none;">Please enter your answer</span>
+                <span class="gr-form__success" style="display: none;">Success! Please refresh the page to see your answer.</span>
+            </form>
+        `;
 
+        if (data && Object.keys(data) && Object.keys(data).length > 0) {
             // display all the answers to the current question
             // sort in timestamp desc order
             html += Object.keys(data)
@@ -258,54 +260,54 @@ function initSingleQuestion() {
                     </div>
                 `;
             }).join('');
-
-            contentAnswersEl.setHTMLUnsafe(html);
-
-            // add event listener to add answer to firebase on data submit
-            var formEl = contentAnswersEl.querySelector('.content__answer-form');
-            var formSubmitEl = contentAnswersEl.querySelector('.content__answer-form button');
-
-            formSubmitEl.addEventListener('click', ev => {
-                if (!formEl.checkValidity()) {
-                    formEl.reportValidity();
-                    return;
-                }
-
-                // create random key for each answer
-                var answerKey = Math.random().toString(36).substring(2,7);
-
-                // get data from form as object
-                const formData = new FormData(formEl);
-                const input = Object.fromEntries(formData.entries());
-
-                firebase.database().ref('answers/' + answerKey).set({
-                    content: input['content'],
-                    authorID: currentUser.username,
-                    questionID: params.get('key'),
-                    timestamp: Date.now(),
-                    answerID: answerKey
-                }, (error) => {
-                    if (error) {
-                        console.log('Error saving answer > ', error);
-
-                        // make sure the success message is hidden
-                        formEl.querySelector('.gr-form__success').style.display = 'none';
-
-                        // display error message
-                        formEl.querySelector('.gr-form__error').style.display = 'block';
-                    } else {
-                        // clear the form for the user
-                        formEl.reset();
-                        
-                        // make sure the error message is hidden
-                        formEl.querySelector('.gr-form__error').style.display = 'none';
-
-                        // display success message
-                        formEl.querySelector('.gr-form__success').style.display = 'block';
-                    }
-                });
-            });
         }
+
+        contentAnswersEl.setHTMLUnsafe(html);
+
+        // add event listener to add answer to firebase on data submit
+        var formEl = contentAnswersEl.querySelector('.content__answer-form');
+        var formSubmitEl = contentAnswersEl.querySelector('.content__answer-form button');
+
+        formSubmitEl.addEventListener('click', ev => {
+            if (!formEl.checkValidity()) {
+                formEl.reportValidity();
+                return;
+            }
+
+            // create random key for each answer
+            var answerKey = Math.random().toString(36).substring(2,7);
+
+            // get data from form as object
+            const formData = new FormData(formEl);
+            const input = Object.fromEntries(formData.entries());
+
+            firebase.database().ref('answers/' + answerKey).set({
+                content: input['content'],
+                authorID: currentUser.username,
+                questionID: params.get('key'),
+                timestamp: Date.now(),
+                answerID: answerKey
+            }, (error) => {
+                if (error) {
+                    console.log('Error saving answer > ', error);
+
+                    // make sure the success message is hidden
+                    formEl.querySelector('.gr-form__success').style.display = 'none';
+
+                    // display error message
+                    formEl.querySelector('.gr-form__error').style.display = 'block';
+                } else {
+                    // clear the form for the user
+                    formEl.reset();
+                    
+                    // make sure the error message is hidden
+                    formEl.querySelector('.gr-form__error').style.display = 'none';
+
+                    // display success message
+                    formEl.querySelector('.gr-form__success').style.display = 'block';
+                }
+            });
+        });
     });
 }
 
