@@ -97,7 +97,8 @@ nav ul li {
     align-items: center;
 }
 
-.header__content a {
+.header__content a,
+.gr-logout {
     text-decoration: none;
     color: #ffffff;
     padding: 8px 12px;
@@ -105,17 +106,27 @@ nav ul li {
     font-weight: bold;
 }
 
+.gr-logout:hover {
+    cursor: pointer;
+}
+
 .container {
-    display: flex;
+    /* display: flex;
     max-width: 1200px;
-    margin: 20px auto;
+    margin: 20px auto; */
+
+    display: flex;
+    flex-direction: row;
+    max-width: 1200px;
+    min-width: 100%;
+    margin: 24px auto;
 }
 
 .sidebar {
     width: 250px;
     padding: 15px 0;
     border-radius: 10px;
-    margin-left: -300px; /* Shift the sidebar further to the left */
+    /* margin-left: -300px; Shift the sidebar further to the left */
 }
 
 .sidebar button {
@@ -156,13 +167,22 @@ nav ul li {
 }
 
 .content {
-    flex: 1;
+    /* flex: 1; */
     margin-left: 20px;
+    margin-right: 300px;
+    /* to shift nav and content left */
     padding: 20px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    width: calc(100% - 250px);
+}
+
+@media (max-width: 1000px) {
+    .content {
+        margin-right: 0;
+    }
 }
 
 .question-box {
@@ -213,6 +233,7 @@ textarea {
     padding: 12px;
     font-family: inherit;
     width: -webkit-fill-available;
+    resize: vertical;
 }
 
 textarea:focus {

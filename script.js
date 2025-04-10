@@ -1,5 +1,9 @@
 function initHeader() {
-    // load header in js so we dont need to add the same html to each page?
+    // load header in js so we dont need to add the same html to each page
+
+    // if there is a user logged in, display log out menu item instead of log in and regsiter
+    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
+
     var headerHtml = `
         <div class="header__container">
             <div class="header__content">
@@ -14,8 +18,12 @@ function initHeader() {
                 <div class="header__actions">
                     <nav>
                         <ul>
-                            <li><a href="login.html">Login</a></li>
-                            <li><a href="register.html">Register</a></li>
+                            ${ 
+                                !currentUser 
+                                || !currentUser.username 
+                                ? '<li><a href="login.html">Login</a></li><li><a href="register.html">Register</a></li>' 
+                                : '<li><span class="gr-logout">Logout</span></li>' 
+                            }
                             <li><a href="about.html">About</a></li>
                         </ul>
                     </nav>
@@ -27,41 +35,20 @@ function initHeader() {
         </div>
     `;
 
-    var previousHtml = `
-        <div class="header__container">
-            <div class="header__content">
-                <div>
-                    <img class="header__logo" src="images/placeholder-logo.png" alt="GRAIL">
-                </div>
-                
-                <nav>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="#">Resources</a></li>
-                        <li><a href="#">Help</a></li>
-                    </ul>
-                </nav>
-                
-                <input type="text" class="header__search" type="text" placeholder="Search...">
-                
-                ${window.location.href.indexOf('login.html') > -1 ? '<a href="register.html">Register</a>' : ''}
-                ${window.location.href.indexOf('register.html') > -1 ? '<a href="login.html">Login</a>' : ''}
-
-                ${
-                    window.location.href.indexOf('login.html') == -1 
-                    && window.location.href.indexOf('register.html') == -1 
-                    ? '<a href="#">User Info</a>'
-                    : ''
-                }
-            </div>
-        </div>
-    `;
-
     var headerEl = document.querySelector('header');
 
     if (headerEl) {
         headerEl.innerHTML = headerHtml;
+    }
+
+    var logoutEl = document.querySelector(".gr-logout");
+
+    if (logoutEl) {        
+        logoutEl.addEventListener('click', ev => {
+            localStorage.removeItem('user');
+
+            window.location.href = '/login.html';
+        });
     }
 }
 
@@ -100,8 +87,10 @@ function initSidebar() {
         <a href="questions.html?where=all"${ 
             window.location.pathname 
             && window.location.pathname.indexOf('questions.html') > -1 
-            && params.get("where")
-            && params.get("where") == 'all' ? `class="selected"` : ''}>All</a>
+            && (
+                !params.get("where")
+                || params.get("where") == 'all'
+            ) ? `class="selected"` : ''}>All</a>
     `;
 
     var sidebarEl = document.querySelector('.sidebar');
@@ -150,12 +139,7 @@ function initQuestionBoxes() {
                     }
                 }
 
-                // todo > get current user, for now, hardcoding
-                var currentUser = {
-                    username: 'eljzakula',
-                    email: "eljzakula@gmail.com",
-                    superuser: true
-                }
+                var currentUser = JSON.parse(localStorage.user);
                 
                 // if form is valid, save question to database
 
@@ -203,12 +187,10 @@ function initQuestionBoxes() {
 }
 
 function initDarkMode() {
-    console.log('ch')
     var js = document.createElement("script");
     
     js.src = 'darkmode.js';
 
-    console.log('ch')
     document.body.appendChild(js);
 }
 
@@ -419,11 +401,19 @@ function initQuestions() {
 document.addEventListener('DOMContentLoaded', () => {
 
     // get current user from session
-    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
+    var currentUser = null;
+
+    if (localStorage.getItem('user')) {
+        currentUser = JSON.parse(localStorage.user);
+    }
 
     // if there is no current user, redirect them to the login screen
-    if (!currentUser && (window.location.href.indexOf('register.html') == -1 && window.location.href.indexOf('login.html') == -1)) {
-        window.location.href = '/login.html';
+    if (!currentUser && window.location.href.indexOf('login.html') == -1) {
+        console.log("wut");
+        if (window.location.href.indexOf('register.html') == -1) {
+            console.log("wut 2");
+            window.location.href = '/login.html';
+        }
     }
 
     // FIREBASE
@@ -443,44 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // get the database
     var database = firebase.database();
-
-    // doc on how to structure data -> https://firebase.google.com/docs/database/web/structure-data
-
-    // so far we'll need three data objects
-    // 1. questions
-    // 2. answers
-    // 3. users
-
-    // will store in flattened data structure like in doc example
-
-    // example user data for now, can add other attributes later
-    // this is just to get started
-    // {
-    //     username: 'eljzakula',
-    //     email: 'eljzakula@gmail.com',
-    //     superuser: true
-    // }
-
-    // each user key will have to be their username
-
-    // doc how to write data to database -> https://firebase.google.com/docs/database/web/read-and-write#web_1
-
-    // note: using set function overrites data if it currently exists
-    if (false) { // working example how to set data in database
-        firebase.database().ref('users/' + 'eljzakula').set({
-            username: 'eljzakula',
-            email: 'eljzakula@gmail.com',
-            superuser: true
-        }, (error) => {
-            if (error) {
-                // The write failed...
-                console.log('error setting data', error);
-            } else {
-                // Data saved successfully!
-                console.log('data saved');
-            }
-        });
-    }
 
     // load header in js so we dont need to add the same html to each page
     initHeader();
@@ -503,5 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initQuestions();
     }
 
+    // add dark mode to every page without having to manually include script on every page
+    // also takes care of issue when dark mode tries to load before the header menu exists
     initDarkMode();
 });
