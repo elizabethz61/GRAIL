@@ -30,6 +30,7 @@ function initHeader() {
                     <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
                         <span class="dark-mode-toggle__icon">🌙</span>
                     </button>
+                    ${ currentUser ? `<a class="gr-profile" href="profile.html">${currentUser.username[0].toUpperCase()}</a>` : '' }
                 </div>
             </div>
         </div>
@@ -69,11 +70,9 @@ function initSidebar() {
             && window.location.pathname.indexOf('questions.html') > -1 
             && params.get("where")
             && params.get("where") == 'myquestions' ? `class="selected"` : ''}>My Questions</a>
-        <a href="questions.html?where=participation"${ 
+        <a href="answers.html"${ 
             window.location.pathname 
-            && window.location.pathname.indexOf('questions.html') > -1 
-            && params.get("where")
-            && params.get("where") == 'participation' ? `class="selected"` : ''}>My Participation</a>
+            && window.location.pathname.indexOf('answers.html') > -1 ? `class="selected"` : ''}>My Participation</a>
         <a href="questions.html?where=unsolved"${ 
             window.location.pathname 
             && window.location.pathname.indexOf('questions.html') > -1 
@@ -93,7 +92,7 @@ function initSidebar() {
             ) ? `class="selected"` : ''}>All</a>
     `;
 
-    var sidebarEl = document.querySelector('.sidebar');
+    var sidebarEl = document.querySelector('.gr-sidebar');
 
     if (sidebarEl) {
         sidebarEl.innerHTML = sidebarHtml;
@@ -193,7 +192,6 @@ function initDarkMode() {
 
     document.body.appendChild(js);
 }
-
 
 function initLogin() {
     var loginEl = document.querySelector('#login-form');
@@ -437,7 +435,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // load header in js so we dont need to add the same html to each page
     initHeader();
 
-    initQuestionBoxes();
+    if (window.location.href.indexOf('profile.html') == -1) {
+        console.log("wut");
+        initQuestionBoxes();
+    }
 
     initSidebar();
 

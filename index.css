@@ -122,6 +122,10 @@
     text-align: right;
 }
 
+.gr-answers .question-entry__actions {
+    justify-content: space-between;
+}
+
 .question-entry__info {
     display: flex;
     flex-direction: column;
@@ -154,4 +158,8 @@
     padding: 6px 10px;
     min-width: auto;
     font-size: 12px;
+}
+
+.question-entry__content {
+    white-space: pre;
 }

@@ -1,5 +1,5 @@
 function initQuestionsPage(currentUser) {
-    var contentEl = document.querySelector('.content');
+    var contentEl = document.querySelector('.gr-content');
     let params = new URLSearchParams(document.location.search);
 
     var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
@@ -139,7 +139,7 @@ function initQuestionsPage(currentUser) {
 }
 
 function initSingleQuestion() {
-    var contentEl = document.querySelector('.content');
+    var contentEl = document.querySelector('.gr-content');
     var contentQuestionEl = document.querySelector('.content__question');
     var contentAnswersEl = document.querySelector('.content__answers');
     
@@ -149,6 +149,8 @@ function initSingleQuestion() {
     if (!contentEl || !contentQuestionEl || !contentAnswersEl) {
         return;
     }
+
+    var questionTitle = 'Untitled';
 
     // display current question info to user
     // todo - display status and make status updateable only to author
@@ -162,6 +164,8 @@ function initSingleQuestion() {
             // and calculate difference in days
             const diffTime = Math.abs(new Date() - new Date(Number(data.timestamp)));
             const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            questionTitle = data.title;
 
             contentQuestionEl.innerHTML = `
                 <div class="content__question-title">
@@ -187,7 +191,7 @@ function initSingleQuestion() {
 
                 // get/set logo for user info
                 userEl.insertAdjacentHTML('afterbegin', `
-                    <div class="user__logo">${data.img ? `<img src="${data.img}" alt="User">` : data.authorID[0].toUpperCase()}</div>    
+                    <a href="user.html?user=${data.authorID}"><div class="user__logo">${data.img ? `<img src="${data.img}" alt="User">` : data.authorID[0].toUpperCase()}</div></a>
                 `);
                                  
                 // get/set name for user info
@@ -286,7 +290,8 @@ function initSingleQuestion() {
                 authorID: currentUser.username,
                 questionID: params.get('key'),
                 timestamp: Date.now(),
-                answerID: answerKey
+                answerID: answerKey,
+                title: questionTitle,
             }, (error) => {
                 if (error) {
                     console.log('Error saving answer > ', error);
