@@ -189,8 +189,74 @@ function initProfile() {
     });
 }
 
+function initModForm() {
+    var modFormEl = document.querySelector('.gr-mod-form');
+    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
+
+    if (!modFormEl) {
+        return;
+    }
+
+    modFormEl.addEventListener('submit', ev => {
+        ev.preventDefault();
+
+        // get data from form as object
+        const formData = new FormData(ev.target);
+        const input = Object.fromEntries(formData.entries());
+
+        // if user is resetting their password
+        // make sure it all is correct
+        if (input.newPassword || input.confirmPassword) {
+            var newPasswordErrorEl = document.querySelector('.gr-error--newPassword');
+            var confirmPasswordErrorEl = document.querySelector('.gr-error--confirmPassword');
+
+            if (!input.newPassword) {
+                newPasswordErrorEl.style.display = 'block';
+                return;
+            } else {
+                newPasswordErrorEl.style.display = 'none';
+            }
+
+            if (!input.confirmPassword) {
+                confirmPasswordErrorEl.style.display = 'block';
+                return;
+            } else {
+                confirmPasswordErrorEl.style.display = 'none';
+            }
+
+            if (input.newPassword != input.confirmPassword) {
+                confirmPasswordErrorEl.innerHTML = `Passwords do not match.`;
+                confirmPasswordErrorEl.style.display = 'block';
+                return;
+            } else {
+                confirmPasswordErrorEl.innerHtml = `Please confirm your new password to change your password.`;
+                confirmPasswordErrorEl.style.display = 'none';
+            }
+        }
+
+        firebase.database().ref('users/' + currentUser.username).update({
+            passkey: input.newPassword
+        }, (error) => {
+            if (error) {
+                // The write failed...
+                console.log('Error saving user info: ', error);
+            } else {
+                console.log('Successfully saved user data.');
+
+                document.querySelector('.gr-form__success').style.display = 'block';
+
+                // clear form
+                modFormEl.reset();
+            }
+        });
+    });
+}
+
+// fixme - delete account on both pages
+
 document.addEventListener('DOMContentLoaded', () => {
     let params = new URLSearchParams(document.location.search);
+    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
 
     if (params.get('user')) {
         var contentEl = document.querySelector('.gr-content');
@@ -203,8 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ref.once('value', function (snapshot) {
             const data = snapshot.val();
             
-            contentEl.innerHTML = `
+            var html = `
                 <div class="gr-user">
+                    <h1>Profile</h1>
                     <div class="gr-user__header">
                         <div class="gr-user__logo">E</div>
                         <span>${data.username}</span>
@@ -243,6 +310,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
+            
+            if (currentUser.superuser) {
+                html += `
+                    <form class="gr-mod-form">
+                        <h2>Moderator Controls</h2>
+                        
+                        <span>Update Password</span>
+
+                        <div class="gr-form__row">
+                            <div class="gr-form__item">
+                                <label for="newPassword">New Password</label>
+                                
+                                <input type="password" name="newPassword">
+                                
+                                <span class="gr-error gr-error--newPassword" style="display: none;">Please set a new password to change the password.</span>
+                            </div>
+
+                            <div class="gr-form__item">
+                                <label for="confirmPassword">Confirm Password</label>
+                                
+                                <input type="password" name="confirmPassword">
+
+                                <span class="gr-error gr-error--confirmPassword" style="display: none;">Please confirm the new password to change the password.</span>
+                            </div>
+                        </div>
+
+                        <button class="gr-btn gr-primary" type="submit">Save</button>
+                        <button class="gr-btn gr-secondary" type="button">Delete Account</button>
+                    </form>
+
+                    <div class="gr-form__success" style="display: none; margin-top: 0;">Password reset successfully.</div>
+                `;
+            }
+
+            contentEl.setHTMLUnsafe(html);
+
+            initModForm();
         }, function (error) {
             console.log("Something went wrong loading user: " + error.code);
         });

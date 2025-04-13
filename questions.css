@@ -29,6 +29,7 @@
     flex-direction: column;
     margin-left: auto;
     text-align: right;
+    align-items: flex-end;
 }
 
 .question-entry__info {
@@ -88,12 +89,20 @@
 
 .user__info {
     display: flex;
-    flex-direction: column;
-
+    flex-direction: row;
 }
 
 .user__info span:last-child {
     font-size: 12px;
+}
+
+.user__name-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.gr-flag {
+    margin-left: auto;
 }
 
 .user__logo {

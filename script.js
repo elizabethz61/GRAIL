@@ -1,3 +1,30 @@
+function initFlags() {
+    var flagEls = document.querySelectorAll('.question-entry .question-entry__actions svg');
+
+    if (!flagEls) {
+        return;
+    }
+
+    flagEls.forEach(flagEl => {
+        flagEl.addEventListener('click', ev => {
+            var questionEl = ev.target.closest('.question-entry');
+
+            var isFlagged = flagEl.getAttribute('fill') == 'red' ? true : false;
+    
+            firebase.database().ref('posts/' + questionEl.dataset.key).update({
+                flagged: !isFlagged
+            }, (error) => {
+                if (error) {
+                    // The write failed...
+                    console.log('Error flagging post: ', error);
+                } else {
+                    flagEl.setAttribute('fill', isFlagged ? 'black' : 'red');
+                }
+            });
+        });
+    });
+}
+
 function initHeader() {
     // load header in js so we dont need to add the same html to each page
 
@@ -252,8 +279,6 @@ function initRegister() {
 
     usernameEl.addEventListener('input', ev => {
         if (/[^A-Za-z0-9 ]/.test(usernameEl.value)) {
-            console.log('confirmPasswordEl.value ', usernameEl.value);
-
             usernameEl.setCustomValidity('Username must not contain special characters.');
             usernameEl.reportValidity();
         } else {
@@ -274,8 +299,6 @@ function initRegister() {
         var ref = firebase.database().ref('/users/' + input.username);            
         ref.once('value', function (snapshot) {
             const data = snapshot.val();
-
-            console.log('data', data);
 
             // if user does exist
             if (first) {
@@ -317,79 +340,105 @@ function initQuestions() {
         return;
     }
 
+    var currentUser = JSON.parse(localStorage.getItem('user'));
+
     // get 3 latest questions
     var ref = firebase.database().ref('/posts').orderByChild('timestamp').limitToLast(3);
     ref.on('value', function (snapshot) {
         const data = snapshot.val();
 
         if (data) {
-            questionEntriesEl.innerHTML = Object.keys(data).map(key => {
-                var date = 'N/A';
-
-                // format the date nicely for user display
-                if (data[key].dueDate) {
-                    var dateSplits = data[key].dueDate.split('-');
-
-                    switch(dateSplits[1]) {
-                        case '01':
-                            date = 'January';
-                            break;
-                        case '02':
-                            date = 'February';
-                            break;
-                        case '03':
-                            date = 'March';
-                            break;
-                        case '04':
-                            date = 'April';
-                            break;
-                        case '05':
-                            date = 'May';
-                            break;
-                        case '06':
-                            date = 'June';
-                            break;
-                        case '07':
-                            date = 'July';
-                            break;
-                        case '08':
-                            date = 'August';
-                            break;
-                        case '09':
-                            date = 'September';
-                            break;
-                        case '10':
-                            date = 'October';
-                            break;
-                        case '11':
-                            date = 'November';
-                            break;
-                        case '12':
-                            date = 'December';
-                            break;
+            questionEntriesEl.innerHTML = Object.keys(data)
+                .filter(key => {
+                    if (currentUser.superuser) {
+                        return key;
+                    } else {
+                        if (!data[key].flagged || data[key].authorID == currentUser.username) {
+                            return key;
+                        }
                     }
+                })
+                .map(key => {
+                    var date = 'N/A';
 
-                    date += ' ' + dateSplits[2] + ', ';
+                    // format the date nicely for user display
+                    if (data[key].dueDate) {
+                        var dateSplits = data[key].dueDate.split('-');
 
-                    date += dateSplits[0];
-                }
-                
-                return `
-                    <div class="question-entry">
-                        <div class="question-entry__info">
-                            <h4 class="question-entry__title">${data[key].title || 'Untitled'}</h4>
-                            <span class="question-entry__subject">${data[key].subject}</span>
+                        switch(dateSplits[1]) {
+                            case '01':
+                                date = 'January';
+                                break;
+                            case '02':
+                                date = 'February';
+                                break;
+                            case '03':
+                                date = 'March';
+                                break;
+                            case '04':
+                                date = 'April';
+                                break;
+                            case '05':
+                                date = 'May';
+                                break;
+                            case '06':
+                                date = 'June';
+                                break;
+                            case '07':
+                                date = 'July';
+                                break;
+                            case '08':
+                                date = 'August';
+                                break;
+                            case '09':
+                                date = 'September';
+                                break;
+                            case '10':
+                                date = 'October';
+                                break;
+                            case '11':
+                                date = 'November';
+                                break;
+                            case '12':
+                                date = 'December';
+                                break;
+                        }
+
+                        date += ' ' + dateSplits[2] + ', ';
+
+                        date += dateSplits[0];
+                    }
+                    
+                    return `
+                        <div class="question-entry" data-key="${key}">
+                            <div class="question-entry__info">
+                                <h4 class="question-entry__title">${data[key].title || 'Untitled'}</h4>
+                                <span class="question-entry__subject">${data[key].subject}</span>
+                            </div>
+                            
+                            <div class="question-entry__actions">
+                                ${ currentUser.superuser || (data[key].authorID == currentUser.username && data[key].flagged) ? `
+                                    <div class="gr-flag">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
+                                            <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
+                                        </svg>
+                                        <div class="tooltip">Click to flag the question and hide it from users.</div>
+                                    </div>
+                                ` : ''}
+                                <span class="question-entry__duedate">Due: ${date}</span>
+                                <a href="/question.html?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
+                            </div>
                         </div>
-                        
-                        <div class="question-entry__actions">
-                            <span class="question-entry__duedate">Due: ${date}</span>
-                            <a href="/question.html?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
-                        </div>
-                    </div>
-                `
-            }).join('');
+                    `
+                })
+                .join('');
 
             questionBoxEl.style.display = 'block';
+
+            // allow moderator users to flag questions
+            if (currentUser.superuser) {
+                initFlags();
+            }
         }
     }, function (error) {
         console.log("Something went wrong logging user in: " + error.code);
@@ -407,9 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // if there is no current user, redirect them to the login screen
     if (!currentUser && window.location.href.indexOf('login.html') == -1) {
-        console.log("wut");
         if (window.location.href.indexOf('register.html') == -1) {
-            console.log("wut 2");
             window.location.href = '/login.html';
         }
     }
@@ -436,7 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeader();
 
     if (window.location.href.indexOf('profile.html') == -1) {
-        console.log("wut");
         initQuestionBoxes();
     }
 
