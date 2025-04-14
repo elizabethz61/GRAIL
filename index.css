@@ -2,15 +2,14 @@
     height: 225px;
     position: relative;
     overflow: hidden;
-    border: 1px solid #f4f4f4;
-    border-radius: 5px;
+    border: 2px solid var(--primary);
+    border-radius: 15px;
 }
 
 .gr-announcement {
     width: 100%;
     height: 225px;
     overflow: hidden;
-
     position: absolute;
     top: 0;
     bottom: 0;
@@ -88,8 +87,6 @@
 .gr-form__item:has(textarea) {
     width: 100%;
 }
-
-/* Add these styles at the end of your index.css file */
 
 .question-entries {
     display: flex;
@@ -203,4 +200,50 @@
 
 .gr-flag:hover .tooltip {
     visibility: visible;
+}
+
+body.dark-mode .gr-announcements-container {
+    height: 225px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+}
+
+body.dark-mode .gr-announcement {
+    width: 100%;
+    height: 225px;
+    overflow: hidden;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transition: all .75s ease-in-out;
+}
+
+body.dark-mode .gr-announcement img {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+body.dark-mode .gr-announcement--grail img {
+    top: -320px;
+}
+  
+body.dark-mode .gr-announcement__content {
+    top: 0;
+    position: absolute;
+    left: 0;
+    margin: 24px 0;
+    padding: 0 48px;
+    bottom: 0;
+    align-content: center;
+    color: rgb(255, 255, 255);
+}
+
+body.dark-mode .gr-announcement--help .gr-announcement__content {
+    background: #121212;
 }

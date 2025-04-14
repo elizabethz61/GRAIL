@@ -1,6 +1,6 @@
 :root {
-    --primary: #9a4de2;
-    --primary-dark: #9000d3;
+    --primary: #683494;
+    --primary-dark: #38246c;
     --primary-light: #d6d6fc;
     --secondary: #F2E9E4;
     --text-color: white;
@@ -10,8 +10,37 @@
     /* https://coolors.co/palette/22223b-4a4e69-9a8c98-c9ada7-f2e9e4 */
 }
 
+@font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-Light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-SemiBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-SemiBoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+  }
+  
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -32,8 +61,8 @@ input:focus {
 }
 
 header {
-    background-color: var(--primary);
-    height: 80px; /* Increased from 70px to 80px */
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));;
+    height: 80px;
     overflow: visible; /* Allow content to overflow if needed */
     position: relative; /* Create a stacking context */
 }
@@ -58,15 +87,21 @@ header {
 
 .header__search {
     background-color: unset;
-    border: 1px solid #ffffff;
+    border: 1px solid var(--primary);
     padding: 6px;
-    width: 300px;
-    border-radius: 5px;
-    height: 25px;
+    width: 500px;
+    border-radius: 15px;
+    height: 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
 .header__search::placeholder {
     color: var(--text-color);
+    font-size: 14px;
 }
 
 .header__search:focus {
@@ -110,6 +145,21 @@ nav ul li {
     cursor: pointer;
 }
 
+/* No background by default in dark mode */
+.header__content a {
+    color: white;
+    background-color: transparent;
+    border: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+/* Light background appears on hover */
+.header__content a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
 .container {
     display: flex;
     flex-direction: row;
@@ -117,6 +167,12 @@ nav ul li {
     min-width: 100%;
     margin: 24px auto;
 }
+
+.container, .question-box, .question-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
 
 .sidebar,
 .profile-sidebar {
@@ -153,28 +209,36 @@ nav ul li {
     display: flex;
     text-decoration: none;
     color: black;
-    font-size: 14px;
+    font-size: 16px;
 }
 
-.sidebar .selected {
-    background-color: #ddd;
-    border-radius: 0;
-    border-right: 5px solid var(--primary-dark);
+.sidebar a {
+    border-radius: 20px; /* Increase rounding for a more pill-shaped appearance */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.sidebar a:hover {
+    background-color: var(--primary); /* Purple highlight on hover */
+    color: white; /* Ensure text remains legible */
+}
+
+.sidebar a:active {
+    background-color: var(--primary-dark); /* Darker purple on click */
 }
 
 .content,
 .profile-content {
-    /* flex: 1; */
-    margin-left: 20px;
-    margin-right: 300px;
-    /* to shift nav and content left */
+    flex: 1;             /* Allow the content to grow to available space */
+    margin-left: 20px;   /* Retain some left margin for spacing */
+    margin-right: 0;     /* Remove the fixed margin on the right */
     padding: 20px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    width: calc(100% - 300px);
+    width: auto;         /* Remove the fixed width calculation */
 }
+
 
 @media (max-width: 1000px) {
     .content,
@@ -186,8 +250,8 @@ nav ul li {
 .question-box {
     padding: 16px 24px;
     background: #fafafa;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    border-radius: 15px;
+    border: 2px solid var(--primary);
 }
 
 .question-box__submit,
@@ -263,6 +327,7 @@ textarea:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 16px;
 }
 
 /* Form elements styling */
@@ -289,6 +354,8 @@ input[type='date'] {
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box; /* Ensure padding doesn't affect width */
+    letter-spacing: 0.4px;
+    font-size: 16px;
 }
 
 .form-box button {
@@ -301,6 +368,7 @@ input[type='date'] {
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease;
+    font-size: 18px;
 }
 
 .form-box p {
@@ -435,7 +503,7 @@ body.dark-mode .dark-mode-toggle__icon {
 body.dark-mode .question-box,
 body.dark-mode .form-box {
     background: #1e1e1e;
-    border-color: #333;
+    border: 2px solid var(--primary);
 }
 
 body.dark-mode .question-entry {
@@ -476,7 +544,7 @@ body.dark-mode .sidebar .selected {
 
 body.dark-mode .header__search {
     background-color: rgba(255, 255, 255, 0.1);
-    border-color: #e0e0e0;
+    border-color: var(--primary-dark);
 }
 
 body.dark-mode .header__search::placeholder {
@@ -502,18 +570,21 @@ body.dark-mode a:hover {
     color: var(--primary);
 }
 
-/* Make header links/buttons more visible in dark mode */
+/* No background by default in dark mode */
 body.dark-mode .header__content a {
     color: white;
-    background-color: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: transparent;
+    border: none;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease, border 0.2s ease;
 }
 
+/* Light background appears on hover */
 body.dark-mode .header__content a:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
 }
+
 
 .logo a {
     display: block;
@@ -545,13 +616,6 @@ body.dark-mode .logo a:hover {
     height: 60px;
     width: auto;
     display: block;
-}
-
-/* Make header links/buttons more visible in dark mode */
-body.dark-mode .header__content a {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 body.dark-mode .header__content a:hover {
@@ -594,4 +658,9 @@ body.dark-mode .form-box p {
 /* Ensure error messages are visible in dark mode */
 body.dark-mode .form-box .gr-error {
     color: #ff6b6b; /* Brighter red for errors in dark mode */
+}
+
+body.dark-mode .sidebar a:hover {
+    background-color: var(--primary); /* Purple highlight on hover */
+    color: white; /* Ensure text remains legible */
 }
