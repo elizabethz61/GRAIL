@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAIL Forum</title>
+    <link rel="stylesheet" href="index.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="questions.css">
+
+    <link rel="icon" href="images/favicon.ico">
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+
+    <script src="script.js"></script>
+    <script src="profile.js"></script>
+
+    <style>
+        form {
+            max-width: 600px;
+        }
+        
+        form > span,
+        form label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .gr-profile__pic {
+            display: flex;
+            flex-direction: row;
+            gap: 36px;
+            align-items: center;
+            margin-top: 12px;
+            margin-bottom: 24px;
+        }
+
+        .gr-profile__img {
+            height: 75px;
+            width: 75px;
+            background-color: darkblue;
+            border-radius: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .gr-profile__pic-actions {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+        }
+
+        .gr-profile__pic-actions button {
+            margin-top: 0;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 0; /* Remove margin, use gap instead */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+            margin-top: 12px;
+            font-family: unset;
+        }
+
+        form input {
+            height: 32px;
+        }
+
+        .gr-form__row {
+            margin-top: 24px;
+        }
+
+        .gr-form__item {
+            gap: 0;
+        }
+
+        form select {
+            height: 32px;
+            padding: 6px;
+            border-radius: 5px;
+            font-family: unset;
+            margin-top: 12px;
+            border: 1px solid #ccc;
+        }
+
+        form select:focus {
+            outline: 1px solid #d4d4d4;
+        }
+
+        .gr-notifications-form {
+            width: 100%;
+        }
+
+        .gr-notifications-form .gr-form__item {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 12px;
+            align-items: center;
+            width: unset;
+        }
+
+        .gr-notifications-form input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+
+        .gr-notifications-form input:checked {
+            accent-color: var(--primary);
+        }
+
+        form button[type='submit'] {
+            margin-right: 12px;
+        }
+
+        .gr-form__item:has(input[name='username']),
+        .gr-form__item:has(input[name='currentPassword']),
+        .gr-form__item:has(select[name='timeZone']),
+        .gr-form__item:has(select[name='mode']) {
+            width: calc(50% - 12px);
+        }
+
+        .gr-account-form > span {
+            padding-top: 24px;
+            display: block;
+        }
+
+        .gr-error {
+            padding-top: 6px;
+        }
+
+        /* delete account styles */
+        .gr-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .gr-modal__content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .gr-modal__content button:first-child {
+            margin-right: 8px;
+        }
+        
+        .gr-modal__content button:last-child {
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header></header>
+    
+    <div class="container">
+        <div class="sidebar gr-profile__sidebar"></div>
+        
+        <div class="content gr-profile__content">
+            <!-- profile form -->
+            <form class="gr-profile-form" style="display: none;">
+                <h1>Profile</h1>
+
+                <span>Profile Picture</span><br/>
+                
+                <div class="gr-profile__pic">
+                    <div class="gr-profile__img"></div>
+            
+                    <!-- todo - not feasible to store base64 strings in db, so keeping this todo rn -->
+                    <div class="gr-profile__pic-actions">
+                        <button type="button" class="gr-btn gr-primary gr-profile__change">Change Picture</button>
+                        <input type="file" name="imageInput" accept="image/*" style="display: none;">
+                        
+                        <button type="button" class="gr-btn gr-secondary">Delete Picture</button>
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="username">Username</label>
+                        <input name="username" disabled required>
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="email">Email Address</label>
+                        <input name="email" type="email" required>
+                    </div>
+
+                    <div class="gr-form__item">
+                        <label for="bday">Birth Date</label>
+                        <input name="bday" type="date">
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="firstName">First Name</label>
+                        <input name="firstName" type="text">
+                    </div>
+
+                    <div class="gr-form__item">
+                        <label for="lastName">Last Name</label>
+                        <input name="lastName" type="text">
+                    </div>
+                </div>
+
+                <div class="gr-form__item">
+                    <label for="about">About Me</label>
+                    <textarea name="about" rows="3"></textarea>
+                </div>
+
+                <button class="gr-btn gr-primary" type="submit">Save</button>
+            </form>
+
+
+            <!-- account form -->
+            <form class="gr-account-form" style="display: none;">
+                <h1>Settings</h1>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="mode">Appearance</label>
+                        
+                        <select name="mode">
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="timeZone">Time Zone</label>
+                        
+                        <select name="timeZone">
+                            <option value="">---</option>
+                            <option value="PT">Pacific Time</option>
+                            <option value="MT">Mountain Time</option>
+                            <option value="CT">Central Time</option>
+                            <option value="ET">Eastern Time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <span>Update Password</span>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="currentPassword">Current Password</label>
+                        
+                        <input type="password" name="currentPassword">
+
+                        <span class="gr-error gr-error--currentPassword" style="display: none;">Please fill out your current password to change your password.</span>
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="newPassword">New Password</label>
+                        
+                        <input  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be 8 characters including 1 uppercase letter, 1 lowercase letter and numeric characters" type="password" name="newPassword">
+                        
+                        <span class="gr-error gr-error--newPassword" style="display: none;">Please set your new password to change your password.</span>
+                    </div>
+
+                    <div class="gr-form__item">
+                        <label for="confirmPassword">Confirm Password</label>
+                        
+                        <input title="Password must be 8 characters including 1 uppercase letter, 1 lowercase letter and numeric characters" type="password" name="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+
+                        <span class="gr-error gr-error--confirmPassword" style="display: none;">Please confirm your new password to change your password.</span>
+                    </div>
+                </div>
+
+                <button class="gr-btn gr-primary" type="submit">Save</button>
+                <button class="gr-btn gr-secondary gr-delete-account" type="button">Delete Account</button>
+            </form>
+
+            <!-- account form -->
+            <form class="gr-notifications-form" style="display: none;">
+                <h1>Notifications</h1>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="mode">Notify me when a user answers one of my questions</label>
+                        
+                        <input type="checkbox" name="userAnswersNotification">
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="mode">Notify me when a user asks a question</label>
+                        
+                        <input type="checkbox" name="userAsksNotification">
+                    </div>
+                </div>
+
+                <div class="gr-form__row">
+                    <div class="gr-form__item">
+                        <label for="mode">Notify me when one of my questions gets flagged</label>
+                        
+                        <input type="checkbox" name="modFlagsQuestion">
+                    </div>
+                </div>
+
+                <button class="gr-btn gr-primary" type="button">Save</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+/* Add these styles at the end of your index.css file */
+
+.question-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.question-entry {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.question-entry__title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: var(--text-color-secondary);
+}
+
+.question-entry__actions {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    text-align: right;
+    align-items: flex-end;
+}
+
+.question-entry__info {
+    display: flex;
+    flex-direction: column;
+}
+
+/* .question-entry__meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+} */
+
+.question-entry__subject {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.question-entry__duedate {
+    color: #d04444;
+    font-size: 12px;
+    /* made smaller so it looks a litle better */
+}
+
+.question-entry .gr-btn {
+    /* position: absolute;
+    right: 16px;
+    top: 12px;
+    margin: 0; */
+    padding: 6px 10px;
+    min-width: auto;
+    font-size: 12px;
+}
+
+/* QUESTION STYLES */
+
+.content__question,
+.content__answer {
+    padding: 24px;
+    background: #fafafa;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.content__question-user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.user__info {
+    display: flex;
+    flex-direction: row;
+}
+
+.user__info span:last-child {
+    font-size: 12px;
+}
+
+.user__name-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.gr-flag {
+    margin-left: auto;
+}
+
+.user__logo {
+    width: 50px;
+    background-color: #0000ff;
+    height: 50px;
+    align-content: center;
+    text-align: center;
+    border-radius: 30px;
+    border: 1px solid darkblue;
+    color: white;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    font-size: 18px;
+}
+
+.content__question-content {
+    margin-top: 12px;
+    white-space: pre;
+}
+
+.content__answer-form .content__answer-title {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.content__answers {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.content__answers > h3 {
+    margin: 0;
+}
+
+.content__answer-form .gr-btn {
+    width: fit-content;
+    align-self: flex-end;
+}
