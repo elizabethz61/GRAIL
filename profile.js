@@ -108,6 +108,52 @@ function initAccount() {
     modeEl.addEventListener('change', ev => {
         localStorage.setItem('darkMode', ev.target.value == 'dark' ? 'true' : 'false');
     });
+
+    // delete account flow
+    var deleteAccountEl = document.querySelector('.gr-delete-account');
+
+    if (deleteAccountEl) {
+        deleteAccountEl.addEventListener('click', ev => {
+            ev.preventDefault();
+
+            const modal = document.createElement('div');
+            modal.classList.add('gr-modal');
+
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.classList.add('gr-modal__content');
+
+            // Add content text
+            modalContent.innerHTML = `
+                <p>Are you sure you want to delete your account? You won't be able to get any of your information back!</p>
+                <button id="delete" class="gr-btn gr-secondary">Delete</button>
+                <button id="cancel" class="gr-btn gr-primary">Cancel</button>
+            `;
+
+            // Append content to modal and modal to body
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+
+            // Close button logic
+            document.querySelector('.gr-modal #cancel').onclick = () => {
+                modal.remove();
+            };
+
+            // delete account logic
+            document.querySelector('.gr-modal #delete').onclick = () => {
+                
+                firebase.database().ref('users/' + currentUser.username)
+                    .remove()
+                    .then(() => {                        
+                        localStorage.removeItem('user');
+                        window.location.href = 'login.html';
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting item:", error);
+                    });
+            };
+        });
+    }
 }
 
 function initProfile() {
@@ -250,9 +296,28 @@ function initModForm() {
             }
         });
     });
-}
 
-// fixme - delete account on both pages
+    var banAccountEl = document.querySelector('.gr-ban');
+
+    console.log('banAccountEl', banAccountEl);
+
+    banAccountEl.addEventListener('click', ev => {
+        ev.preventDefault();
+
+        var userIsBanned = banAccountEl.innerHTML == 'Activate Account';
+
+        firebase.database().ref('users/' + currentUser.username).update({
+            banned: !userIsBanned
+        }, (error) => {
+            if (error) {
+                // The write failed...
+                console.log('Error banning/activating user: ', error);
+            } else {
+                banAccountEl.innerHTML = userIsBanned ? 'Ban Account' : 'Activate Account';
+            }
+        });
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     let params = new URLSearchParams(document.location.search);
@@ -337,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
 
                         <button class="gr-btn gr-primary" type="submit">Save</button>
-                        <button class="gr-btn gr-secondary" type="button">Delete Account</button>
+                        <button class="gr-btn gr-secondary gr-ban" type="button">${ data.banned ? 'Activate' : 'Ban' } Account</button>
                     </form>
 
                     <div class="gr-form__success" style="display: none; margin-top: 0;">Password reset successfully.</div>

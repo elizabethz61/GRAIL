@@ -239,13 +239,19 @@ function initLogin() {
         const formData = new FormData(loginEl);
         const input = Object.fromEntries(formData.entries());
 
-        var ref = firebase.database().ref('/users/' + input.username);            
+        var ref = firebase.database().ref('/users/' + input.username);
         ref.on('value', function (snapshot) {
             const data = snapshot.val();
 
             // if user does exist
             // if creds are legit, redirect to index and store user in session storage
-            if (data && input.username == data.username && input.password == data.passkey) {
+            // also if user isnt banned
+            if (
+                data 
+                && input.username == data.username 
+                && input.password == data.passkey 
+                && (typeof data.banned == 'undefined' || data.banned == false)
+            ) {
                 localStorage.setItem('user', JSON.stringify(data));
 
                 window.location.href = '/index.html';

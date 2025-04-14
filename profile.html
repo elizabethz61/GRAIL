@@ -138,6 +138,37 @@
         .gr-error {
             padding-top: 6px;
         }
+
+        /* delete account styles */
+        .gr-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .gr-modal__content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .gr-modal__content button:first-child {
+            margin-right: 8px;
+        }
+        
+        .gr-modal__content button:last-child {
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
@@ -265,7 +296,7 @@
                 </div>
 
                 <button class="gr-btn gr-primary" type="submit">Save</button>
-                <button class="gr-btn gr-secondary" type="button">Delete Account</button>
+                <button class="gr-btn gr-secondary gr-delete-account" type="button">Delete Account</button>
             </form>
 
             <!-- account form -->
