@@ -164,8 +164,11 @@ nav ul li {
     display: flex;
     flex-direction: row;
     max-width: 1200px;
-    min-width: 100%;
+    min-width: -webkit-fill-available;
+    /* updated to fill available, 100% overflows the screen with any extra padding */
     margin: 24px auto;
+    padding: 0 48px;
+    /* added some padding so the content isnt bunching up right against the end of the screen */
 }
 
 .container, .question-box, .question-entry {
@@ -411,6 +414,25 @@ input[type='date'] {
     text-decoration: underline;
 }
 
+.gr-terms {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    width: unset;
+}
+
+.gr-terms input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    min-width: 16px;
+}
+
+.gr-terms input:checked {
+    accent-color: var(--primary);
+}
+
 
 .gr-error {
     color: red;
@@ -501,7 +523,9 @@ body.dark-mode .dark-mode-toggle__icon {
 
 /* Dark mode content styles */
 body.dark-mode .question-box,
-body.dark-mode .form-box {
+body.dark-mode .form-box,
+body.dark-mode .content__question,
+body.dark-mode .content__answer {
     background: #1e1e1e;
     border: 2px solid var(--primary);
 }
@@ -512,7 +536,9 @@ body.dark-mode .question-entry {
 }
 
 body.dark-mode .question-entry__title,
-body.dark-mode .form-box {
+body.dark-mode .form-box,
+body.dark-mode .content__question,
+body.dark-mode .content__answer {
     color: #e0e0e0;
 }
 
@@ -524,7 +550,9 @@ body.dark-mode .question-entry__meta {
 body.dark-mode .gr-form input,
 body.dark-mode .gr-form select,
 body.dark-mode .form-box input,
-body.dark-mode textarea {
+body.dark-mode textarea,
+body.dark-mode input,
+body.dark-mode select {
     background-color: #2a2a2a;
     color: #e0e0e0;
     border-color: #444;
@@ -533,7 +561,9 @@ body.dark-mode textarea {
 body.dark-mode .gr-form input::placeholder,
 body.dark-mode .gr-form select::placeholder,
 body.dark-mode .form-box input::placeholder,
-body.dark-mode textarea::placeholder {
+body.dark-mode textarea::placeholder,
+body.dark-mode input::placeholder,
+body.dark-mode select::placeholder {
     color: #999;
 }
 

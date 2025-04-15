@@ -428,7 +428,7 @@ function initQuestions() {
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
                                             <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
                                         </svg>
-                                        <div class="tooltip">Click to flag the question and hide it from users.</div>
+                                        ${ currentUser.superuser ? '<div class="tooltip">Click to flag the question and hide it from users.</div>' : '' }
                                     </div>
                                 ` : ''}
                                 <span class="question-entry__duedate">Due: ${date}</span>
@@ -463,7 +463,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // if there is no current user, redirect them to the login screen
     if (!currentUser && window.location.href.indexOf('login.html') == -1) {
         if (window.location.href.indexOf('register.html') == -1) {
-            window.location.href = '/login.html';
+            if (
+                window.location.href.indexOf('about.html') == -1 
+                && window.location.href.indexOf('terms.html') == -1
+                && window.location.href.indexOf('acceptableUse.html') == -1
+            ) {
+                window.location.href = '/login.html';
+            }
         }
     }
 
