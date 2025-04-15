@@ -220,7 +220,8 @@ nav ul li {
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
-.sidebar a:hover {
+.sidebar a:hover,
+.sidebar .selected {
     background-color: var(--primary); /* Purple highlight on hover */
     color: white; /* Ensure text remains legible */
 }

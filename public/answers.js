@@ -7,7 +7,7 @@ function initAnswers() {
 
     var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
 
-    var ref = firebase.database().ref('/answers').orderByChild('authorID').equalTo(currentUser.username);;
+    var ref = firebase.database().ref('/answers').orderByChild('author').equalTo(currentUser.username);
 
     ref.on('value', function (snapshot) {
         const data = snapshot.val();
@@ -45,7 +45,7 @@ function initAnswers() {
                                 month: "long",
                                 day: "numeric"
                               }) }</span>
-                            <a href="/question.html?key=${data[key].questionID}" class="gr-btn gr-secondary gr-answer">View Question</a>
+                            <a href="/question?key=${data[key].questionID}" class="gr-btn gr-secondary gr-answer">View Question</a>
                         </div>
                     </div>
                 `
@@ -62,6 +62,14 @@ function initAnswers() {
             if (currentUser.superuser) {
                 initMyAnswerFlags();
             }
+        } else {
+            contentEl.innerHTML = `
+                <div class="gr-answers question-box">
+                    <h3>Your Answers</h3>
+
+                    <p>No answers yet, go ahead and <a href="/questions">answer some questions!</a></p>
+                </div>
+            `;
         }
     }, function (error) {
         console.log("Something went wrong loading questions: " + error.code);

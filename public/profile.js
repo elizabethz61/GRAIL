@@ -19,13 +19,11 @@ function initAccount() {
 
     var currentPassword = null;
 
-    var ref = firebase.database().ref('/users/' + currentUser.username);
+    var ref = firebase.database().ref('/users/' + currentUser.uid);
     ref.once('value', function (snapshot) {
         const data = snapshot.val();
         if (data) {
             timeZone.value = data.timeZone ? data.timeZone : '';
-
-            currentPassword = data.passkey;
         }
     }, function (error) {
         console.log("Something went wrong loading question: " + error.code);
@@ -38,62 +36,56 @@ function initAccount() {
         const formData = new FormData(ev.target);
         const input = Object.fromEntries(formData.entries());
 
-        // if user is resetting their password
-        // make sure it all is correct
-        if (input.newPassword || input.confirmPassword || input.currentPassword) {
-            var currentPasswordErrorEl = document.querySelector('.gr-error--currentPassword');
-            var newPasswordErrorEl = document.querySelector('.gr-error--newPassword');
-            var confirmPasswordErrorEl = document.querySelector('.gr-error--confirmPassword');
+        // // if user is resetting their password
+        // // make sure it all is correct
+        // if (input.newPassword || input.confirmPassword || input.currentPassword) {
+        //     var currentPasswordErrorEl = document.querySelector('.gr-error--currentPassword');
+        //     var newPasswordErrorEl = document.querySelector('.gr-error--newPassword');
+        //     var confirmPasswordErrorEl = document.querySelector('.gr-error--confirmPassword');
                 
-            if (!input.currentPassword) {
-                currentPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                currentPasswordErrorEl.style.display = 'none';
-            }
+        //     if (!input.currentPassword) {
+        //         currentPasswordErrorEl.style.display = 'block';
+        //         return;
+        //     } else {
+        //         currentPasswordErrorEl.style.display = 'none';
+        //     }
 
-            if (!input.newPassword) {
-                newPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                newPasswordErrorEl.style.display = 'none';
-            }
+        //     if (!input.newPassword) {
+        //         newPasswordErrorEl.style.display = 'block';
+        //         return;
+        //     } else {
+        //         newPasswordErrorEl.style.display = 'none';
+        //     }
 
-            if (!input.confirmPassword) {
-                confirmPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                confirmPasswordErrorEl.style.display = 'none';
-            }
+        //     if (!input.confirmPassword) {
+        //         confirmPasswordErrorEl.style.display = 'block';
+        //         return;
+        //     } else {
+        //         confirmPasswordErrorEl.style.display = 'none';
+        //     }
 
-            if (input.newPassword != input.confirmPassword) {
-                confirmPasswordErrorEl.innerHTML = `Passwords do not match.`;
-                confirmPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                confirmPasswordErrorEl.innerHtml = `Please confirm your new password to change your password.`;
-                confirmPasswordErrorEl.style.display = 'none';
-            }
+        //     if (input.newPassword != input.confirmPassword) {
+        //         confirmPasswordErrorEl.innerHTML = `Passwords do not match.`;
+        //         confirmPasswordErrorEl.style.display = 'block';
+        //         return;
+        //     } else {
+        //         confirmPasswordErrorEl.innerHtml = `Please confirm your new password to change your password.`;
+        //         confirmPasswordErrorEl.style.display = 'none';
+        //     }
 
-            if (input.currentPassword != currentPassword) {
-                currentPasswordErrorEl.innerHTML = `Password is incorrect.`;
-                currentPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                currentPasswordErrorEl.innerHTML = `Please fill out your current password to change your password.`;
-                currentPasswordErrorEl.style.display = 'none';
-            }
-        }
-
-        var data = {
-            timeZone: input.timeZone
-        };
-
-        if (input.newPassword) {
-            data.passkey = input.newPassword;
-        }
+        //     if (input.currentPassword != currentPassword) {
+        //         currentPasswordErrorEl.innerHTML = `Password is incorrect.`;
+        //         currentPasswordErrorEl.style.display = 'block';
+        //         return;
+        //     } else {
+        //         currentPasswordErrorEl.innerHTML = `Please fill out your current password to change your password.`;
+        //         currentPasswordErrorEl.style.display = 'none';
+        //     }
+        // }
  
-        firebase.database().ref('users/' + currentUser.username).update(data, (error) => {
+        firebase.database().ref('users/' + currentUser.uid).update({
+            timeZone: input.timeZone
+        }, (error) => {
             if (error) {
                 // The write failed...
                 console.log('Error saving user info: ', error);
@@ -142,11 +134,11 @@ function initAccount() {
             // delete account logic
             document.querySelector('.gr-modal #delete').onclick = () => {
                 
-                firebase.database().ref('users/' + currentUser.username)
+                firebase.database().ref('users/' + currentUser.uid)
                     .remove()
                     .then(() => {                        
                         localStorage.removeItem('user');
-                        window.location.href = 'login.html';
+                        window.location.href = 'login';
                     })
                     .catch((error) => {
                         console.error("Error deleting item:", error);
@@ -171,7 +163,7 @@ function initProfile() {
         return;
     }
 
-    var ref = firebase.database().ref('/users/' + currentUser.username);
+    var ref = firebase.database().ref('/users/' + currentUser.uid);
     ref.once('value', function (snapshot) {
         const data = snapshot.val();
         if (data) {
@@ -204,7 +196,7 @@ function initProfile() {
             firstNameEl.value = data.firstName ? data.firstName : null;
             lastNameEl.value = data.lastName ? data.lastName : null;
             aboutEl.value = data.about ? data.about : null;
-            emailEl.value = data.email ? data.email : null;
+            emailEl.value = currentUser.email;
         }
     }, function (error) {
         console.log("Something went wrong loading question: " + error.code);
@@ -217,8 +209,8 @@ function initProfile() {
         const formData = new FormData(ev.target);
         const input = Object.fromEntries(formData.entries());
 
-        firebase.database().ref('users/' + currentUser.username).update({
-            email: input.email,
+        firebase.database().ref('users/' + currentUser.uid).update({
+            // email: input.email,
             firstName: input.firstName,
             lastName: input.lastName,
             bday: input.bday,
@@ -236,77 +228,15 @@ function initProfile() {
 }
 
 function initModForm() {
-    var modFormEl = document.querySelector('.gr-mod-form');
-    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
-
-    if (!modFormEl) {
-        return;
-    }
-
-    modFormEl.addEventListener('submit', ev => {
-        ev.preventDefault();
-
-        // get data from form as object
-        const formData = new FormData(ev.target);
-        const input = Object.fromEntries(formData.entries());
-
-        // if user is resetting their password
-        // make sure it all is correct
-        if (input.newPassword || input.confirmPassword) {
-            var newPasswordErrorEl = document.querySelector('.gr-error--newPassword');
-            var confirmPasswordErrorEl = document.querySelector('.gr-error--confirmPassword');
-
-            if (!input.newPassword) {
-                newPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                newPasswordErrorEl.style.display = 'none';
-            }
-
-            if (!input.confirmPassword) {
-                confirmPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                confirmPasswordErrorEl.style.display = 'none';
-            }
-
-            if (input.newPassword != input.confirmPassword) {
-                confirmPasswordErrorEl.innerHTML = `Passwords do not match.`;
-                confirmPasswordErrorEl.style.display = 'block';
-                return;
-            } else {
-                confirmPasswordErrorEl.innerHtml = `Please confirm your new password to change your password.`;
-                confirmPasswordErrorEl.style.display = 'none';
-            }
-        }
-
-        firebase.database().ref('users/' + currentUser.username).update({
-            passkey: input.newPassword
-        }, (error) => {
-            if (error) {
-                // The write failed...
-                console.log('Error saving user info: ', error);
-            } else {
-                console.log('Successfully saved user data.');
-
-                document.querySelector('.gr-form__success').style.display = 'block';
-
-                // clear form
-                modFormEl.reset();
-            }
-        });
-    });
-
     var banAccountEl = document.querySelector('.gr-ban');
-
-    console.log('banAccountEl', banAccountEl);
+    var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
 
     banAccountEl.addEventListener('click', ev => {
         ev.preventDefault();
 
         var userIsBanned = banAccountEl.innerHTML == 'Activate Account';
 
-        firebase.database().ref('users/' + currentUser.username).update({
+        firebase.database().ref('users/' + currentUser.uid).update({
             banned: !userIsBanned
         }, (error) => {
             if (error) {
@@ -378,34 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (currentUser.superuser) {
                 html += `
-                    <form class="gr-mod-form">
-                        <h2>Moderator Controls</h2>
-                        
-                        <span>Update Password</span>
-
-                        <div class="gr-form__row">
-                            <div class="gr-form__item">
-                                <label for="newPassword">New Password</label>
-                                
-                                <input type="password" name="newPassword">
-                                
-                                <span class="gr-error gr-error--newPassword" style="display: none;">Please set a new password to change the password.</span>
-                            </div>
-
-                            <div class="gr-form__item">
-                                <label for="confirmPassword">Confirm Password</label>
-                                
-                                <input type="password" name="confirmPassword">
-
-                                <span class="gr-error gr-error--confirmPassword" style="display: none;">Please confirm the new password to change the password.</span>
-                            </div>
-                        </div>
-
-                        <button class="gr-btn gr-primary" type="submit">Save</button>
-                        <button class="gr-btn gr-secondary gr-ban" type="button">${ data.banned ? 'Activate' : 'Ban' } Account</button>
-                    </form>
-
-                    <div class="gr-form__success" style="display: none; margin-top: 0;">Password reset successfully.</div>
+                    <button class="gr-btn gr-secondary gr-ban" type="button">${ data.banned ? 'Activate' : 'Ban' } Account</button>
                 `;
             }
 
@@ -426,15 +329,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // init sidebar
         sidebarEl.innerHTML =  `
-            <a href="profile.html" ${ 
-                window.location.href.indexOf('profile.html') > -1
+            <a href="profile" ${ 
+                window.location.href.indexOf('profile') > -1
                 && !params.get('where') ? `class="selected"` : ''}>Profile</a>
-            <a href="profile.html?where=account" ${ 
-                window.location.href.indexOf('profile.html') > -1 
+            <a href="profile?where=account" ${ 
+                window.location.href.indexOf('profile') > -1 
                 && params.get("where")
                 && params.get("where") == 'account' ? `class="selected"` : ''}>Account</a>
-            <a href="profile.html?where=notifications"${ 
-                window.location.href.indexOf('profile.html') > -1 
+            <a href="profile?where=notifications"${ 
+                window.location.href.indexOf('profile') > -1 
                 && params.get("where")
                 && params.get("where") == 'notifications'
                 ? `class="selected"` : ''}>Notifications</a>

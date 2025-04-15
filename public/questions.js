@@ -13,7 +13,7 @@ function initQuestionsPage(currentUser) {
     var ref = null;
 
     if (params.get('where') && params.get('where') == 'myquestions') {
-        ref = firebase.database().ref('/posts').orderByChild('authorID').equalTo(currentUser.username);
+        ref = firebase.database().ref('/posts').orderByChild('author').equalTo(currentUser.username);
     } else if (params.get('where') && params.get('where') == 'participation') {
         isQuestion = false;
         // todo
@@ -30,29 +30,29 @@ function initQuestionsPage(currentUser) {
     ref.on('value', function (snapshot) {
         const data = snapshot.val();
 
-        if (data) {
-            var title = 'All Questions';
+        var title = 'All Questions';
 
-            if (params.get('where')) {
-                switch(params.get('where')) {
-                    case 'myquestions':
-                        title = 'My Questions';
-                        break;
-                    case 'participation':
-                        title = 'My Participation';
-                        break;
-                    case 'unsolved':
-                        title = 'Unsolved Questions';
-                        break;
-                    case 'solved':
-                        title = 'Solved Questions';
-                        break;
-                    default:
-                        title = 'All Questions';
-                        break;
-                }
+        if (params.get('where')) {
+            switch(params.get('where')) {
+                case 'myquestions':
+                    title = 'My Questions';
+                    break;
+                case 'participation':
+                    title = 'My Participation';
+                    break;
+                case 'unsolved':
+                    title = 'Unsolved Questions';
+                    break;
+                case 'solved':
+                    title = 'Solved Questions';
+                    break;
+                default:
+                    title = 'All Questions';
+                    break;
             }
+        }
 
+        if (data) {
             var html = `
                 <div class="qr-questions question-box">
                     <h3>${title}</h3>
@@ -65,7 +65,7 @@ function initQuestionsPage(currentUser) {
                     if (currentUser.superuser) {
                         return key;
                     } else {
-                        if (!data[key].flagged || currentUser.username == data[key].authorID) {
+                        if (!data[key].flagged || currentUser.uid == data[key].author) {
                             return key;
                         }
                     }
@@ -129,7 +129,7 @@ function initQuestionsPage(currentUser) {
                             </div>
                             
                             <div class="question-entry__actions">
-                                ${ currentUser.superuser || (data[key].authorID == currentUser.username && data[key].flagged) ? `
+                                ${ currentUser.superuser || (data[key].author == currentUser.username && data[key].flagged) ? `
                                     <div class="gr-flag">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
                                             <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
@@ -138,7 +138,7 @@ function initQuestionsPage(currentUser) {
                                     </div>
                                 ` : ''}
                                 <span class="question-entry__duedate">Due: ${date}</span>
-                                <a href="/question.html?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
+                                <a href="/question?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
                             </div>
                         </div>
                     `
@@ -156,6 +156,14 @@ function initQuestionsPage(currentUser) {
             if (currentUser.superuser) {
                 initQuestionFlags();
             }
+        } else {
+            contentEl.innerHTML = `
+                <div class="qr-questions question-box">
+                    <h3>${title}</h3>
+
+                    <p>No questions yet, go ahead and <a href="/index">ask one!</a></p>
+                </div>
+            `;
         }
     }, function (error) {
         console.log("Something went wrong loading questions: " + error.code);
@@ -210,25 +218,21 @@ function initSingleQuestion() {
             var userInfoEl = contentEl.querySelector('.user__name-date');
 
             // get the question's user from db
-            var userRef = firebase.database().ref('/users/' + data.authorID); // fixme - if user doesn't exist?
+            var userRef = firebase.database().ref('/users').orderByChild('username').equalTo(data.author); // fixme - if user doesn't exist?
             userRef.once('value', function (userSnapshot) {
                 var questionUser = userSnapshot.val();
 
+                console.log("questionUser", questionUser, Object.keys(questionUser)[0]);
+
                 // get/set logo for user info
                 userEl.insertAdjacentHTML('afterbegin', `
-                    <a href="user.html?user=${data.authorID}"><div class="user__logo">${data.img ? `<img src="${data.img}" alt="User">` : data.authorID[0].toUpperCase()}</div></a>
+                    <a href="user?user=${Object.keys(questionUser)[0]}"><div class="user__logo">${data.img ? `<img src="${data.img}" alt="User">` : data.author[0].toUpperCase()}</div></a>
                 `);
                                  
                 // get/set name for user info
                 userInfoEl.insertAdjacentHTML('afterbegin', `
                     <span>
-                        ${
-                            questionUser 
-                            && questionUser.firstName 
-                            && questionUser.lastName 
-                            ? questionUser.firstName + ' ' + questionUser.lastName 
-                            : questionUser ? questionUser.email : data.authorID
-                        }
+                        ${ data.author }
                     </span>
                 `);
             }, function (error) {
@@ -277,7 +281,7 @@ function initSingleQuestion() {
                     if (currentUser.superuser) {
                         return key;
                     } else {
-                        if (!data[key].flagged || currentUser.username == data[key].authorID) {
+                        if (!data[key].flagged || currentUser.username == data[key].author) {
                             return key;
                         }
                     }
@@ -291,7 +295,7 @@ function initSingleQuestion() {
                     <div class="content__answer" data-key="${key}">
                         <div class="user__info">
                             <div class="user__name-date">
-                                <span>${ String(data[key].authorID).charAt(0).toUpperCase() + String(data[key].authorID).slice(1) }</span>
+                                <span>${ data[key].author }</span>
                                 <span>${diffDays > 1 ? diffDays + ' days ago' : diffDays == 1 ? diffDays + ' day ago' : 'Today'}</span>
                             </div>
 
@@ -335,7 +339,7 @@ function initSingleQuestion() {
 
             firebase.database().ref('answers/' + answerKey).set({
                 content: input['content'],
-                authorID: currentUser.username,
+                author: currentUser.username,
                 questionID: params.get('key'),
                 timestamp: Date.now(),
                 answerID: answerKey,
@@ -424,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let params = new URLSearchParams(document.location.search);
 
-    if (window.location.href.indexOf('question.html') && params.get('key')) {
+    if (window.location.href.indexOf('question') && params.get('key')) {
         // question html logic here
 
         initSingleQuestion();

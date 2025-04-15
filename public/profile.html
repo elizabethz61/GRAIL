@@ -13,6 +13,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
 
     <script src="script.js"></script>
     <script src="profile.js"></script>
@@ -206,7 +207,7 @@
                 <div class="gr-form__row">
                     <div class="gr-form__item">
                         <label for="email">Email Address</label>
-                        <input name="email" type="email" required>
+                        <input name="email" type="email" disabled required>
                     </div>
 
                     <div class="gr-form__item">
@@ -265,9 +266,9 @@
                     </div>
                 </div>
 
-                <span>Update Password</span>
+                <p>To change your password, <a href="reset-password">click here</a> to go through the reset password flow.</p>
 
-                <div class="gr-form__row">
+                <!-- <div class="gr-form__row">
                     <div class="gr-form__item">
                         <label for="currentPassword">Current Password</label>
                         
@@ -293,7 +294,7 @@
 
                         <span class="gr-error gr-error--confirmPassword" style="display: none;">Please confirm your new password to change your password.</span>
                     </div>
-                </div>
+                </div> -->
 
                 <button class="gr-btn gr-primary" type="submit">Save</button>
                 <button class="gr-btn gr-secondary gr-delete-account" type="button">Delete Account</button>

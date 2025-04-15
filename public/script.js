@@ -35,7 +35,7 @@ function initHeader() {
         <div class="header__container">
             <div class="header__content">
                 <div class="logo">
-                    <a href="index.html">
+                    <a href="index">
                         <img src="images/placeholder-logo.png" alt="GRAIL Logo">
                     </a>
                 </div>
@@ -48,16 +48,16 @@ function initHeader() {
                             ${ 
                                 !currentUser 
                                 || !currentUser.username 
-                                ? '<li><a href="login.html">Login</a></li><li><a href="register.html">Register</a></li>' 
+                                ? '<li><a href="login">Login</a></li><li><a href="register">Register</a></li>' 
                                 : '<li><span class="gr-logout">Logout</span></li>' 
                             }
-                            <li><a href="about.html">About</a></li>
+                            <li><a href="about">About</a></li>
                         </ul>
                     </nav>
                     <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
                         <span class="dark-mode-toggle__icon">🌙</span>
                     </button>
-                    ${ currentUser ? `<a class="gr-profile" href="profile.html">${currentUser.username[0].toUpperCase()}</a>` : '' }
+                    ${ currentUser ? `<a class="gr-profile" href="profile">${currentUser.username[0].toUpperCase()}</a>` : '' }
                 </div>
             </div>
         </div>
@@ -73,9 +73,16 @@ function initHeader() {
 
     if (logoutEl) {        
         logoutEl.addEventListener('click', ev => {
-            localStorage.removeItem('user');
-
-            window.location.href = '/login.html';
+            firebase.auth().signOut()
+                .then(() => {
+                    console.log("User signed out.");
+                    // Optionally redirect or show a message
+                    localStorage.removeItem('user');
+                    window.location.href = "/login.html"; // or wherever you want
+                })
+                .catch((error) => {
+                    console.error("Error signing out:", error);
+                });
         });
     }
 }
@@ -83,36 +90,38 @@ function initHeader() {
 function initSidebar() {
     let params = new URLSearchParams(document.location.search);
 
+    console.log('params', !!window.location.href && window.location.href.indexOf('answers') > -1);
+
     // when initializing sidebar, I was thinking we could use the same page "questions"
     // for all the question pages
     // becuase when we get the data from firebase
     // its pretty much the same data just filtered on
     // only the current users questions or only the unsolved questions, etc
     var sidebarHtml =  `
-        <a href="index.html" ${ 
-            window.location.pathname 
-            && window.location.pathname.indexOf('index.html') > -1 ? `class="selected"` : ''}>Home</a>
-        <a href="questions.html?where=myquestions" ${ 
-            window.location.pathname 
-            && window.location.pathname.indexOf('questions.html') > -1 
+        <a href="index" ${ 
+            !!window.location.href 
+            && window.location.href.indexOf('index') > -1 ? `class="selected"` : ''}>Home</a>
+        <a href="questions?where=myquestions" ${ 
+            !!window.location.href 
+            && window.location.href.indexOf('questions') > -1 
             && params.get("where")
             && params.get("where") == 'myquestions' ? `class="selected"` : ''}>My Questions</a>
-        <a href="answers.html"${ 
-            window.location.pathname 
-            && window.location.pathname.indexOf('answers.html') > -1 ? `class="selected"` : ''}>My Participation</a>
-        <a href="questions.html?where=unsolved"${ 
-            window.location.pathname 
-            && window.location.pathname.indexOf('questions.html') > -1 
+        <a href="answers"${ 
+            !!window.location.href 
+            && window.location.href.indexOf('answers') > -1 ? `class="selected"` : ''}>My Participation</a>
+        <a href="questions?where=unsolved"${ 
+            !!window.location.href 
+            && window.location.href.indexOf('questions') > -1 
             && params.get("where")
             && params.get("where") == 'unsolved' ? `class="selected"` : ''}>Unsolved</a>
-        <a href="questions.html?where=solved"${ 
-            window.location.pathname 
-            && window.location.pathname.indexOf('questions.html') > -1 
+        <a href="questions?where=solved"${ 
+            !!window.location.href 
+            && window.location.href.indexOf('questions') > -1 
             && params.get("where")
             && params.get("where") == 'solved' ? `class="selected"` : ''}>Solved</a>
-        <a href="questions.html?where=all"${ 
-            window.location.pathname 
-            && window.location.pathname.indexOf('questions.html') > -1 
+        <a href="questions?where=all"${ 
+            !!window.location.href 
+            && window.location.href.indexOf('questions') > -1 
             && (
                 !params.get("where")
                 || params.get("where") == 'all'
@@ -185,7 +194,7 @@ function initQuestionBoxes() {
                     dueDate: input['dueDate'],
                     content: input['content'],
                     status: 'Unsolved',
-                    authorID: currentUser.username,
+                    author: currentUser.username,
                     timestamp: Date.now()
                 }, (error) => {
                     if (error) {
@@ -222,10 +231,13 @@ function initDarkMode() {
 
 function initLogin() {
     var loginEl = document.querySelector('#login-form');
+    var errorEl = document.querySelector('.gr-form__error');
 
-    if (!loginEl) {
+    if (!loginEl || !errorEl) {
         return;
     }
+
+    var submitEl = loginEl.querySelector('button[type="submit"');
 
     loginEl.addEventListener('submit', ev => {
         ev.preventDefault();
@@ -239,28 +251,35 @@ function initLogin() {
         const formData = new FormData(loginEl);
         const input = Object.fromEntries(formData.entries());
 
-        var ref = firebase.database().ref('/users/' + input.username);
-        ref.on('value', function (snapshot) {
-            const data = snapshot.val();
+        // fix - some security issues
+        firebase.auth().signInWithEmailAndPassword(input.email, input.password)
+            .then((userCredential) => {
+                // Signed in
+                var user = userCredential.user;
 
-            // if user does exist
-            // if creds are legit, redirect to index and store user in session storage
-            // also if user isnt banned
-            if (
-                data 
-                && input.username == data.username 
-                && input.password == data.passkey 
-                && (typeof data.banned == 'undefined' || data.banned == false)
-            ) {
-                localStorage.setItem('user', JSON.stringify(data));
+                var ref = firebase.database().ref('/users/' + user.uid);
+                ref.once('value', function (snapshot) {
+                    const data = snapshot.val();
+                    if (data) {
+                        if (!user.emailVerified || user.disabled || (data.banned && data.banned == true)) {
+                            errorEl.innerHTML = !user.emailVerified 
+                                ? `Error: Your email address has not been verified. Please verify your email address to continue.` 
+                                : `Error: Your account has been disabled, please contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a> for further information.`;
+                            errorEl.style.display = 'block';
+                        } else {
+                            window.location.href = 'index';
+                        }
+                    }
+                }, function (error) {
+                    console.log("Something went wrong loading question: " + error.code);
+                });
+            })
+            .catch((error) => {
+                var errorMessage = JSON.parse(error.message);
 
-                window.location.href = '/index.html';
-            } else { // if user doesn't exist - show error
-                document.querySelector('.gr-form__error').style.display = 'block';
-            }
-        }, function (error) {
-            console.log("Something went wrong logging user in: " + error.code);
-        });
+                errorEl.innerHTML = errorMessage && errorMessage.error && errorMessage.error.message ? `Error: ${errorMessage.error.message}` : `Something went wrong, please try again or contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>`;
+                errorEl.style.display = 'block';
+            });
     });
 }
 
@@ -269,6 +288,8 @@ function initRegister() {
     var passwordEl = document.querySelector('#password');
     var confirmPasswordEl = document.querySelector('#confirm-password');
     var usernameEl = document.querySelector('#username');
+    var successEl = document.querySelector('.gr-form__success');
+    var errorEl = document.querySelector('.gr-form__error');
 
     if (!registerEl || !confirmPasswordEl || !passwordEl || !usernameEl) {
         return;
@@ -282,15 +303,6 @@ function initRegister() {
             confirmPasswordEl.setCustomValidity('');
         }
     });
-
-    usernameEl.addEventListener('input', ev => {
-        if (/[^A-Za-z0-9 ]/.test(usernameEl.value)) {
-            usernameEl.setCustomValidity('Username must not contain special characters.');
-            usernameEl.reportValidity();
-        } else {
-            usernameEl.setCustomValidity('');
-        }
-    });
     
     registerEl.addEventListener('submit', ev => {
         ev.preventDefault();
@@ -299,42 +311,53 @@ function initRegister() {
         const formData = new FormData(registerEl);
         const input = Object.fromEntries(formData.entries());
 
-        var first = true;
+        firebase.auth().createUserWithEmailAndPassword(input.email, input.password)
+            .then((userCredential) => {
+                const user = userCredential.user;
 
-        // check if username already exists in firebase
-        var ref = firebase.database().ref('/users/' + input.username);            
-        ref.once('value', function (snapshot) {
-            const data = snapshot.val();
+                // Add additional profile info to firebase
+                firebase.database().ref('users/' + user.uid).set({
+                    email: user.email,
+                    username: input.username,
+                    timestamp: Date.now(),
+                    superuser: false,
+                    uid: user.uid
+                }, (error) => {
+                    if (error) {
+                        console.log('Error saving answer > ', error);
+                    } else {
+                        console.log('added additional profile info');
+                    }
+                });
+            
+                // Send email verification
+                user.sendEmailVerification()
+                    .then(() => {
+                        console.log("Verification email sent to:", user, user.email);
 
-            // if user does exist
-            if (first) {
-                if (data && input.username == data.username) {
-                    document.querySelector('.gr-form__error').style.display = 'block';
-                    document.querySelector('.gr-form__success').style.display = 'none';
-                } else {
-                    document.querySelector('.gr-form__error').style.display = 'none';
+                        errorEl.style.display = 'none';
 
-                    firebase.database().ref('users/' + input.username).set({
-                        username: input.username,
-                        email: input.email,
-                        name: null, // will be able to set later in profile or sum
-                        role: 'student', // student by default, can add mod flow later
-                        passkey: input.password
-                    }, (error) => {
-                        if (error) {
-                            // The write failed...
-                            console.log('Error registering user: ', error);
-                        } else {
-                            document.querySelector('.gr-form__success').style.display = 'block';
-                        }
+                        successEl.innerHTML = `Verification email sent to: ` + user.email + `. Once verified, navigate to the <a href="login">login page</a> to sign in.`;
+                        successEl.style.display = 'block';
+                    })
+                    .catch((error) => {
+                        console.error("Error sending verification email:", error, error.message);
+
+                        successEl.style.display = 'none';
+
+                        errorEl.innerHTML = `Error sending verification email: ` + error.message;
+                        errorEl.style.display = 'block';
                     });
-                }
-            }
+            
+                })
+            .catch((error) => {
+                console.error("Registration error:", error, error.message);
+                
+                successEl.style.display = 'none';
 
-            first = false;
-        }, function (error) {
-            console.log("Something went wrong registering user: " + error.code);
-        });
+                errorEl.innerHTML = `Registration error: ` + error.message;
+                errorEl.style.display = 'block';
+            });
     });
 }
 
@@ -359,7 +382,7 @@ function initQuestions() {
                     if (currentUser.superuser) {
                         return key;
                     } else {
-                        if (!data[key].flagged || data[key].authorID == currentUser.username) {
+                        if (!data[key].flagged || data[key].author == currentUser.username) {
                             return key;
                         }
                     }
@@ -423,7 +446,7 @@ function initQuestions() {
                             </div>
                             
                             <div class="question-entry__actions">
-                                ${ currentUser.superuser || (data[key].authorID == currentUser.username && data[key].flagged) ? `
+                                ${ currentUser.superuser || (data[key].author == currentUser.username && data[key].flagged) ? `
                                     <div class="gr-flag">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
                                             <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
@@ -432,7 +455,7 @@ function initQuestions() {
                                     </div>
                                 ` : ''}
                                 <span class="question-entry__duedate">Due: ${date}</span>
-                                <a href="/question.html?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
+                                <a href="/question?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
                             </div>
                         </div>
                     `
@@ -453,26 +476,6 @@ function initQuestions() {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // get current user from session
-    var currentUser = null;
-
-    if (localStorage.getItem('user')) {
-        currentUser = JSON.parse(localStorage.user);
-    }
-
-    // if there is no current user, redirect them to the login screen
-    if (!currentUser && window.location.href.indexOf('login.html') == -1) {
-        if (window.location.href.indexOf('register.html') == -1) {
-            if (
-                window.location.href.indexOf('about.html') == -1 
-                && window.location.href.indexOf('terms.html') == -1
-                && window.location.href.indexOf('acceptableUse.html') == -1
-            ) {
-                window.location.href = '/login.html';
-            }
-        }
-    }
-
     // FIREBASE
     var firebaseConfig = {
         apiKey: "AIzaSyAbFHd3lmb0Z8WYlbFV6elB2YzIQIk-uNI",
@@ -488,33 +491,86 @@ document.addEventListener('DOMContentLoaded', () => {
     // initialize
     firebase.initializeApp(firebaseConfig);
 
+    // Initialize Firebase Authentication and get a reference to the service
+    const auth = firebase.auth();
+
     // get the database
     var database = firebase.database();
 
     // load header in js so we dont need to add the same html to each page
     initHeader();
 
-    if (window.location.href.indexOf('profile.html') == -1) {
-        initQuestionBoxes();
-    }
+    // get current user from session
+    var currentUser = null;
+
+    // if (localStorage.getItem('user')) {
+    //     currentUser = JSON.parse(localStorage.user);
+    // }
 
     initSidebar();
 
-    if (window.location.href.indexOf('login.html') > -1) {
+    if (window.location.href.indexOf('login') > -1) {
         initLogin();
     }
 
-    if (window.location.href.indexOf('register.html') > -1) {
+    if (window.location.href.indexOf('register') > -1) {
         initRegister();
-    }
-
-    // only for the index page
-    // init recent questions box
-    if (window.location.href.indexOf('index.html') > -1) {
-        initQuestions();
     }
 
     // add dark mode to every page without having to manually include script on every page
     // also takes care of issue when dark mode tries to load before the header menu exists
     initDarkMode();
+
+
+    // check user status
+    firebase.auth().onAuthStateChanged((user) => {
+        console.log("test");
+        if (user) {
+            var userInfo = {};
+            // User is signed in
+            console.log("User is signed in:", user.email);
+
+            userInfo.email = user.email;
+            userInfo.uid = user.uid;
+
+            // set user in local storage so can pull info easily
+            var ref = firebase.database().ref('/users/' + userInfo.uid);
+            ref.once('value', function (snapshot) {
+                const data = snapshot.val();
+                if (data) {
+                    userInfo.superuser = data.superuser;
+                    userInfo.username = data.username;
+                    userInfo.timestamp = data.timestamp;
+                }
+
+                localStorage.setItem('user', JSON.stringify(userInfo));
+            }, function (error) {
+                console.log("Something went wrong loading user: " + error.code);
+            });
+
+        } else {
+            // No user is signed in
+            console.log("Redirecting to login...");
+            
+            if (
+                window.location.href.indexOf('login') == -1 
+                && window.location.href.indexOf('register') == -1
+                && window.location.href.indexOf('terms') == -1
+                && window.location.href.indexOf('acceptableUse') == -1
+                && window.location.href.indexOf('about') == -1
+            ) {
+                window.location.href = "/login"; // or wherever your login page is
+            }
+        }
+    });
+
+    if (window.location.href.indexOf('profile') == -1) {
+        initQuestionBoxes();
+    }
+
+    // only for the index page
+    // init recent questions box
+    if (window.location.href.indexOf('index') > -1) {
+        initQuestions();
+    }
 });
