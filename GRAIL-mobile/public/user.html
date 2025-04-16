@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAIL Forum</title>
+    <link rel="stylesheet" href="index.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="questions.css">
+
+    <link rel="icon" href="images/favicon.ico">
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+
+    <script src="script.js"></script>
+    <script src="profile.js"></script>
+
+    <style>
+        .gr-user__logo {
+            width: 50px;
+            background-color: #0000ff;
+            height: 50px;
+            align-content: center;
+            text-align: center;
+            border-radius: 30px;
+            border: 1px solid darkblue;
+            color: white;
+            font-weight: bold;
+            padding: 0;
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .gr-user__header {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            align-items: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .gr-user__section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 24px;
+        }
+
+        .gr-user__section span:first-child {
+            font-weight: bold;
+            font-size: 14px;
+        }
+   
+        form {
+            max-width: 600px;
+        }
+        
+        form > span,
+        form label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 0; /* Remove margin, use gap instead */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+            margin-top: 12px;
+            font-family: unset;
+        }
+
+        form input {
+            height: 32px;
+        }
+
+        .gr-form__row {
+            margin-top: 24px;
+        }
+
+        .gr-form__item {
+            gap: 0;
+        }
+
+        form select {
+            height: 32px;
+            padding: 6px;
+            border-radius: 5px;
+            font-family: unset;
+            margin-top: 12px;
+            border: 1px solid #ccc;
+        }
+
+        form select:focus {
+            outline: 1px solid #d4d4d4;
+        }
+
+        form button[type='submit'] {
+            margin-right: 12px;
+        }
+
+        .gr-form__item:has(input[name='currentPassword']) {
+            width: calc(50% - 12px);
+        }
+
+        .gr-account-form > span {
+            padding-top: 24px;
+            display: block;
+        }
+
+        .gr-error {
+            padding-top: 6px;
+        }
+
+        .gr-ban {
+            width: fit-content;
+        }
+    </style>
+</head>
+<body>
+    <header></header>
+    
+    <div class="container">
+        <div class="sidebar gr-sidebar"></div>
+        
+        <div class="content gr-content"></div>
+    </div>
+</body>
+</html>
