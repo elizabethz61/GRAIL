@@ -952,7 +952,7 @@ body.dark-mode .sidebar a:hover {
     .sidebar button,
     .sidebar a {
         padding: 6px;
-        font-size: 11px;
+        font-size: 12.5px;
         margin: 0 4px; /* Reduced margin for smaller screens but still maintain spacing */
     }
 

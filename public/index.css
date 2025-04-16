@@ -29,17 +29,37 @@
 }
   
 .gr-announcement__content {
-    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     position: absolute;
+    top: 0;
     left: 0;
-    margin: 24px 0;
-    padding: 0 48px;
+    right: 0;
     bottom: 0;
-    align-content: center;
+    margin: 0;
+    padding: 24px;
+    text-align: left;
     color: black;
 }
 
+/* Media queries for responsive design */
+@media screen and (max-width: 768px) {
+    .gr-announcement__content {
+        padding: 16px;
+    }
+}
 
+@media screen and (max-width: 480px) {
+    .gr-announcements-container,
+    .gr-announcement {
+        height: 200px;
+    }
+    
+    .gr-announcement__content {
+        padding: 12px;
+    }
+}
 
 /* question box form styling */
 .gr-form input,
