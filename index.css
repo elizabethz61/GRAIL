@@ -1,0 +1,259 @@
+.gr-announcements-container {
+    height: 225px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+}
+
+.gr-announcement {
+    width: 100%;
+    height: 225px;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transition: all .75s ease-in-out;
+}
+
+.gr-announcement img {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+.gr-announcement--grail img {
+    top: -500px;
+}
+  
+.gr-announcement__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 24px;
+    text-align: left;
+    color: black;
+}
+
+/* Media queries for responsive design */
+@media screen and (max-width: 768px) {
+    .gr-announcement__content {
+        padding: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .gr-announcements-container,
+    .gr-announcement {
+        height: 200px;
+    }
+    
+    .gr-announcement__content {
+        padding: 12px;
+    }
+}
+
+/* question box form styling */
+.gr-form input,
+.gr-form select {
+    height: 18px;
+    padding: 6px;
+    border: 1px solid #f4f4f4;
+    border-radius: 3px;
+    font-family: unset;
+}
+
+.gr-form select {
+    height: 32px;
+}
+
+.gr-form input:focus,
+.gr-form select:focus {
+    outline: 1px solid #d4d4d4;
+}
+
+.gr-form__row {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.gr-form__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 50%;
+}
+
+.gr-form__item:has(input[name='title']) {
+    width: 80%;
+}
+
+.gr-form__item:has(input[name='subject']) {
+    width: 20%;
+}
+
+.gr-form__item:has(textarea) {
+    width: 100%;
+}
+
+.question-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.question-entry {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.question-entry__title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: var(--text-color-secondary);
+}
+
+.question-entry__actions {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    text-align: right;
+    align-items: flex-end;
+}
+
+.gr-answers .question-entry__actions {
+    justify-content: space-between;
+}
+
+.question-entry__actions > svg {
+    cursor: pointer;
+}
+
+.question-entry__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.question-entry__subject {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.question-entry__duedate {
+    color: #d04444;
+    font-size: 12px;
+    /* made smaller so it looks a litle better */
+}
+
+.question-entry .gr-btn {
+    padding: 6px 10px;
+    min-width: auto;
+    font-size: 12px;
+}
+
+.question-entry__content {
+    white-space: pre;
+}
+
+.gr-flag {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: #292929d9;
+    font-size:13px;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+    padding: 4px 0;
+    position: absolute;
+    z-index: 1;
+    top: 105%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.gr-flag .tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #040505 transparent;
+}
+
+.gr-flag:hover .tooltip {
+    visibility: visible;
+}
+
+body.dark-mode .gr-announcements-container {
+    height: 225px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+}
+
+body.dark-mode .gr-announcement {
+    width: 100%;
+    height: 225px;
+    overflow: hidden;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transition: all .75s ease-in-out;
+}
+
+body.dark-mode .gr-announcement img {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+body.dark-mode .gr-announcement--grail img {
+    top: -500px;
+}
+  
+body.dark-mode .gr-announcement__content {
+    top: 0;
+    position: absolute;
+    left: 0;
+    margin: 24px 0;
+    padding: 0 48px;
+    bottom: 0;
+    align-content: center;
+    color: rgb(255, 255, 255);
+}
+
+body.dark-mode .gr-announcement__content {
+    color: rgb(255, 255, 255);
+}
+
+body.dark-mode .gr-announcement__content a {
+    color: var(--primary-dark);
+}

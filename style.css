@@ -1,0 +1,973 @@
+:root {
+    --primary: #683494;
+    --primary-dark: #38246c;
+    --primary-light: #d6d6fc;
+    --secondary: #F2E9E4;
+    --text-color: white;
+    --text-color-secondary: black;
+
+    /* color palette generator: https://coolors.co/palette/10002b-240046-3c096c-5a189a-7b2cbf-9d4edd-c77dff-e0aaff */
+    /* https://coolors.co/palette/22223b-4a4e69-9a8c98-c9ada7-f2e9e4 */
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-Light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-SemiBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Inter';
+    src: url('font/InterTight-SemiBoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+  }
+  
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrolling but allow vertical */
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+input:focus {
+    outline: 1px solid #d4d4d4;;
+}
+
+header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));;
+    height: 80px;
+    overflow: visible; /* Allow content to overflow if needed */
+    position: relative; /* Create a stacking context */
+}
+
+.header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 100%;
+}
+
+.header__logo {
+    width: 150px;
+}
+
+.header__search {
+    background-color: unset;
+    border: 1px solid var(--primary);
+    padding: 6px;
+    width: 500px;
+    border-radius: 15px;
+    height: 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.header__search::placeholder {
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.header__search:focus {
+    outline: none !important;
+    border: 1px solid #fffdfd;
+}
+
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000; /* Ensure it's above other elements */
+    position: relative;
+    height: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; /* Add this to remove default margin */
+    display: flex;
+    gap: 15px;
+    align-items: center; /* Ensure vertical alignment */
+}
+
+nav ul li {
+    display: flex; /* Ensure consistent sizing */
+    align-items: center;
+}
+
+.header__content a,
+.gr-logout {
+    text-decoration: none;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.gr-logout:hover {
+    cursor: pointer;
+}
+
+/* No background by default in dark mode */
+.header__content a {
+    color: white;
+    background-color: transparent;
+    border: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+/* Light background appears on hover */
+.header__content a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    max-width: 1200px;
+    min-width: -webkit-fill-available;
+    /* updated to fill available, 100% overflows the screen with any extra padding */
+    margin: 24px auto;
+    padding: 0 48px;
+    /* added some padding so the content isnt bunching up right against the end of the screen */
+}
+
+.container, .question-box, .question-entry {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+
+.sidebar,
+.profile-sidebar {
+    width: 300px;
+    padding: 15px 0;
+    border-radius: 10px;
+}
+
+.sidebar button {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    background-color: unset;
+    border-radius: 15px; /* Rounded square effect */
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 24px;
+}
+
+.sidebar a {
+    width: 100%;
+    max-width: -webkit-fill-available;
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    background-color: unset;
+    border-radius: 15px; /* Rounded square effect */
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 24px;
+    display: flex;
+    text-decoration: none;
+    color: black;
+    font-size: 16px;
+}
+
+.sidebar a {
+    border-radius: 20px; /* Increase rounding for a more pill-shaped appearance */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.sidebar a:hover,
+.sidebar .selected {
+    background-color: var(--primary); /* Purple highlight on hover */
+    color: white; /* Ensure text remains legible */
+}
+
+.sidebar a:active {
+    background-color: var(--primary-dark); /* Darker purple on click */
+}
+
+.content,
+.profile-content {
+    flex: 1;             /* Allow the content to grow to available space */
+    margin-left: 20px;   /* Retain some left margin for spacing */
+    margin-right: 0;     /* Remove the fixed margin on the right */
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: auto;         /* Remove the fixed width calculation */
+}
+
+
+@media (max-width: 1000px) {
+    .content,
+    .profile-content {
+        margin-right: 0;
+    }
+}
+
+.question-box {
+    padding: 16px 24px;
+    background: #fafafa;
+    border-radius: 15px;
+    border: 2px solid var(--primary);
+}
+
+.question-box__submit,
+.gr-answer {
+    display: flex;
+    margin-left: auto;
+    justify-content: center;
+}
+
+.gr-btn {
+    padding: 10px 12px;
+    min-width: 120px;
+    border: 1px solid;
+    border-radius: 5px;
+    border-color: #d1d1d1;
+    margin-top: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gr-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.gr-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.gr-secondary {
+    background-color: var(--primary-light)
+}
+
+.gr-secondary:hover {
+    background-color: var(--primary)
+}
+
+textarea {
+    border: 1px solid #f4f4f4;
+    border-radius: 3px;
+    padding: 12px;
+    font-family: inherit;
+    width: -webkit-fill-available;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: 1px solid #d4d4d4;;
+}
+
+.logo img {
+    height: 60px; /* Increased from 50px to 60px */
+    width: auto;
+    display: block;
+}
+
+/* Center the login and register forms */
+.logincontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Updated to match header height */
+    background-color: #f4f4f4;
+}
+
+/* Style the form box */
+.form-box {
+    background: white;
+    padding: 40px; /* Increased padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Form elements styling */
+.form-box h1 {
+    margin: 0 0 24px 0;
+    color: inherit;
+}
+
+.form-box form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+input[type='date'] {
+    font-family: auto;
+}
+
+.form-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 0; /* Remove margin, use gap instead */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+    letter-spacing: 0.4px;
+    font-size: 16px;
+}
+
+.form-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 18px;
+}
+
+.form-box p {
+    margin: 24px 0 0 0;
+}
+
+.form-box .gr-form__error,
+.form-box .gr-form__success {
+    margin-top: 24px;
+    width: 100%;
+}
+
+/* Button styling */
+.form-box button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.form-box button:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Link styling */
+.form-box p {
+    margin-top: 10px;
+}
+
+.form-box a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.form-box a:hover {
+    text-decoration: underline;
+}
+
+.gr-terms {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    width: unset;
+}
+
+.gr-terms input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    min-width: 16px;
+}
+
+.gr-terms input:checked {
+    accent-color: var(--primary);
+}
+
+
+.gr-error {
+    color: red;
+    display: block;
+    font-size: 12px;
+    padding: 3px 6px;
+}
+
+.gr-form__error {
+    padding: 24px;
+    background-color: #ffe4e4;
+    color: #910000;
+    border-radius: 3px;
+    margin-top: 24px;
+}
+
+.gr-form__success {
+    padding: 24px;
+    background-color: #e9ffe9;
+    color: #003c00;
+    border-radius: 3px;
+    margin-top: 24px;
+}
+
+/* profile btn */
+.header__content .gr-profile {
+    align-content: center;
+    background-color: darkblue;
+    border-radius: 30px;
+    height: 42px;
+    width: 42px;
+    padding: 0;
+    text-align: center;
+    transition: all .25s;
+}
+
+.header__content .gr-profile:hover {
+    background-color: black;
+    color: white;
+    border: 2px solid white;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 2px solid white;
+    cursor: pointer;
+    font-size: 22px;
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1010;
+    transition: all 0.3s;
+    margin-left: 15px;
+    position: relative;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.dark-mode-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.dark-mode-toggle__icon {
+    transition: transform 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .dark-mode-toggle {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .dark-mode-toggle__icon {
+    transform: rotate(180deg);
+}
+
+/* Dark mode content styles */
+body.dark-mode .question-box,
+body.dark-mode .form-box,
+body.dark-mode .content__question,
+body.dark-mode .content__answer {
+    background: #1e1e1e;
+    border: 2px solid var(--primary);
+}
+
+body.dark-mode .question-entry {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark-mode .question-entry__title,
+body.dark-mode .form-box,
+body.dark-mode .content__question,
+body.dark-mode .content__answer {
+    color: #e0e0e0;
+}
+
+body.dark-mode .question-entry__meta {
+    color: #b0b0b0;
+}
+
+/* Dark mode form styles */
+body.dark-mode .gr-form input,
+body.dark-mode .gr-form select,
+body.dark-mode .form-box input,
+body.dark-mode textarea,
+body.dark-mode input,
+body.dark-mode select {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .gr-form input::placeholder,
+body.dark-mode .gr-form select::placeholder,
+body.dark-mode .form-box input::placeholder,
+body.dark-mode textarea::placeholder,
+body.dark-mode input::placeholder,
+body.dark-mode select::placeholder {
+    color: #999;
+}
+
+/* Dark mode navigation/sidebar */
+body.dark-mode .sidebar .selected {
+    background-color: #333;
+}
+
+body.dark-mode .header__search {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-dark);
+}
+
+body.dark-mode .header__search::placeholder {
+    color: #ffffff;
+}
+
+/* Dark mode buttons */
+body.dark-mode .gr-secondary {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .gr-secondary:hover {
+    background-color: #555;
+}
+
+/* Dark mode links */
+body.dark-mode a {
+    color: var(--primary-light);
+}
+
+body.dark-mode a:hover {
+    color: var(--primary);
+}
+
+/* No background by default in dark mode */
+body.dark-mode .header__content a {
+    color: white;
+    background-color: transparent;
+    border: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+/* Light background appears on hover */
+body.dark-mode .header__content a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+
+.logo a {
+    display: block;
+    text-decoration: none;
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    padding: 0; /* Remove padding */
+}
+
+.logo a:hover {
+    opacity: 0.9;
+    background-color: transparent; /* Ensure no background on hover */
+    border: none; /* Ensure no border on hover */
+}
+
+/* Fix for dark mode */
+body.dark-mode .logo a {
+    background-color: transparent; /* Ensure no background in dark mode */
+    border: none; /* Ensure no border in dark mode */
+}
+
+body.dark-mode .logo a:hover {
+    background-color: transparent; /* Ensure no background on hover in dark mode */
+    border: none; /* Ensure no border on hover in dark mode */
+}
+
+/* Ensure logo image has consistent size */
+.logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+body.dark-mode .header__content a:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+/* Also adjust the nav menu items with more specific styling */
+body.dark-mode nav ul li a {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure the dark mode toggle is clearly visible */
+body.dark-mode .dark-mode-toggle {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Add these dark mode styles for login/register pages */
+body.dark-mode .logincontainer {
+    background-color: #1a1a1a; /* Dark background for the login container */
+}
+
+body.dark-mode .form-box {
+    background: #2a2a2a; /* Darker background for the form box */
+    color: #e0e0e0; /* Light text color */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Adjusted shadow for dark mode */
+}
+
+body.dark-mode .form-box h2 {
+    color: #e0e0e0; /* Ensure headings are visible */
+}
+
+body.dark-mode .form-box p {
+    color: #ccc; /* Lighter color for paragraphs */
+}
+
+/* Ensure error messages are visible in dark mode */
+body.dark-mode .form-box .gr-error {
+    color: #ff6b6b; /* Brighter red for errors in dark mode */
+}
+
+body.dark-mode .sidebar a:hover {
+    background-color: var(--primary); /* Purple highlight on hover */
+    color: white; /* Ensure text remains legible */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 800px) {
+
+    .header__content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 8px;
+    }
+    
+    .header__search {
+        width: 100%;
+        font-size: 14px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+    .header__actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center; /* Center the actions */
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: row;
+        flex-wrap: wrap; /* Allow items to wrap */
+        gap: 8px;
+        justify-content: center;
+        width: 100%; /* Ensure full width */
+    }
+
+    .container {
+        flex-direction: column;
+        padding: 0 12px 70px; /* Reduced horizontal padding and kept bottom padding */
+        margin: 12px auto; /* Reduced top/bottom margin */
+    }
+
+    /* Convert the sidebar into a fixed bottom bar */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto; /* Auto height instead of fixed */
+        padding: 8px 0; /* Vertical padding only */
+        margin: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        border-radius: 0;
+        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+        background-color: #fff; /* Add background color */
+        overflow-x: auto; /* Allow horizontal scroll if needed */
+    }
+
+    body.dark-mode .sidebar {
+        background-color: #1e1e1e; /* Dark mode background */
+    }
+
+    .sidebar button,
+    .sidebar a {
+        padding: 8px;
+        font-size: 12px;
+        min-width: 0; /* Remove min-width */
+        white-space: nowrap; /* Prevent text wrapping */
+        flex: 0 1 auto; /* Changed from flex: 1 to flex: 0 1 auto */
+        text-align: center; /* Center text */
+        justify-content: center; /* Center any flex content */
+        padding-left: 8px; /* Override the left padding from desktop styles */
+        margin: 0 8px; /* Increased margin between items from 2px to 8px */
+        max-width: none; /* Remove max-width restriction */
+        width: auto; /* Let items size to their content */
+        display: flex; /* Ensure display flex is maintained */
+        align-items: center; /* Vertically center content */
+    }
+
+    .content,
+    .profile-content {
+        margin: 0;
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box; /* Ensure padding is included in width calculation */
+    }
+
+    /* Fix question box overflow */
+    .question-box,
+    .about-box,
+    .content__question,
+    .content__answer {
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        word-wrap: break-word; /* Ensure text wraps */
+        overflow-wrap: break-word;
+    }
+
+    
+
+    textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Fix header layout */
+    header {
+        height: auto; /* Allow header to expand as needed */
+        padding: 8px 0;
+    }
+    
+    .header__container {
+        padding: 8px;
+    }
+    
+    .header__content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 8px;
+    }
+    
+    .header__search {
+        width: 100%;
+        font-size: 14px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+    .header__actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: row;
+        flex-wrap: wrap; /* Allow items to wrap */
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .logo img {
+        height: 40px; /* Smaller logo for mobile */
+    }
+    
+    .dark-mode-toggle {
+        width: 32px;
+        height: 32px;
+        margin-left: 8px;
+    }
+
+    /* Improve form elements on mobile */
+    .form-box {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 16px;
+    }
+
+    form input,
+    form select,
+    form textarea,
+    .form-box input {
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* Fix buttons in forms */
+    .gr-btn {
+        min-width: 0;
+        padding: 8px;
+        width: auto;
+    }
+
+    /* Fix form elements on mobile */
+    form input,
+    form select,
+    form textarea,
+    .form-box input,
+    input[type="date"],
+    select {
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 5px;
+        height: auto; /* Prevent fixed heights that can cut off content */
+        min-height: 44px; /* Ensure touch-friendly size */
+    }
+
+    /* Ensure date inputs display properly */
+    input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 8px; /* Make space for the calendar icon */
+        min-width: 100%; /* Ensure it takes full width */
+    }
+
+    /* Ensure question form elements are consistent */
+    .question-box form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .question-box textarea,
+    .question-box input,
+    .question-box select {
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 12px;
+    }
+    
+    /* Specifically target the due date selector */
+    .question-box input[type="date"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Fix buttons in forms */
+    .gr-btn {
+        min-width: 0;
+        padding: 8px 16px;
+        width: auto;
+        height: auto;
+    }
+}
+
+/* Additional breakpoint for very small screens */
+@media (max-width: 480px) {
+    .header__content {
+        gap: 6px;
+    }
+
+    .header__actions {
+        justify-content: center; /* Ensure centered on very small screens */
+    }
+    
+    nav ul {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    nav ul li a,
+    .header__content a,
+    .gr-logout {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+    
+    .sidebar button,
+    .sidebar a {
+        padding: 6px;
+        font-size: 12.5px;
+        margin: 0 4px; /* Reduced margin for smaller screens but still maintain spacing */
+    }
+
+    /* Ensure the form elements are properly sized on very small screens */
+    form input,
+    form select,
+    form textarea,
+    .form-box input,
+    input[type="date"] {
+        font-size: 14px; /* Keep font size readable */
+        padding: 10px;
+    }
+    
+    /* Ensure question box elements fit */
+    .question-box {
+        padding: 10px;
+    }
+}
