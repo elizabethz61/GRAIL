@@ -105,10 +105,10 @@ function initSidebar() {
             !!window.location.href 
             && window.location.href.indexOf('questions') > -1 
             && params.get("where")
-            && params.get("where") == 'myquestions' ? `class="selected"` : ''}>My Questions</a>
+            && params.get("where") == 'myquestions' ? `class="selected"` : ''}>Questions</a>
         <a href="answers"${ 
             !!window.location.href 
-            && window.location.href.indexOf('answers') > -1 ? `class="selected"` : ''}>My Participation</a>
+            && window.location.href.indexOf('answers') > -1 ? `class="selected"` : ''}>Participation</a>
         <a href="questions?where=unsolved"${ 
             !!window.location.href 
             && window.location.href.indexOf('questions') > -1 

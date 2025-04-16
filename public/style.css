@@ -695,3 +695,279 @@ body.dark-mode .sidebar a:hover {
     background-color: var(--primary); /* Purple highlight on hover */
     color: white; /* Ensure text remains legible */
 }
+
+/* Mobile responsiveness */
+@media (max-width: 800px) {
+
+    .header__content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 8px;
+    }
+    
+    .header__search {
+        width: 100%;
+        font-size: 14px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+    .header__actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center; /* Center the actions */
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: row;
+        flex-wrap: wrap; /* Allow items to wrap */
+        gap: 8px;
+        justify-content: center;
+        width: 100%; /* Ensure full width */
+    }
+
+    .container {
+        flex-direction: column;
+        padding: 0 12px 70px; /* Reduced horizontal padding and kept bottom padding */
+        margin: 12px auto; /* Reduced top/bottom margin */
+    }
+
+    /* Convert the sidebar into a fixed bottom bar */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto; /* Auto height instead of fixed */
+        padding: 8px 0; /* Vertical padding only */
+        margin: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        border-radius: 0;
+        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+        background-color: #fff; /* Add background color */
+        overflow-x: auto; /* Allow horizontal scroll if needed */
+    }
+
+    body.dark-mode .sidebar {
+        background-color: #1e1e1e; /* Dark mode background */
+    }
+
+    .sidebar button,
+    .sidebar a {
+        padding: 8px;
+        font-size: 12px;
+        min-width: 0; /* Remove min-width */
+        white-space: nowrap; /* Prevent text wrapping */
+        flex: 0 1 auto; /* Changed from flex: 1 to flex: 0 1 auto */
+        text-align: center; /* Center text */
+        justify-content: center; /* Center any flex content */
+        padding-left: 8px; /* Override the left padding from desktop styles */
+        margin: 0 8px; /* Increased margin between items from 2px to 8px */
+        max-width: none; /* Remove max-width restriction */
+        width: auto; /* Let items size to their content */
+        display: flex; /* Ensure display flex is maintained */
+        align-items: center; /* Vertically center content */
+    }
+
+    .content,
+    .profile-content {
+        margin: 0;
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box; /* Ensure padding is included in width calculation */
+    }
+
+    /* Fix question box overflow */
+    .question-box,
+    .about-box,
+    .content__question,
+    .content__answer {
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        word-wrap: break-word; /* Ensure text wraps */
+        overflow-wrap: break-word;
+    }
+
+    
+
+    textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Fix header layout */
+    header {
+        height: auto; /* Allow header to expand as needed */
+        padding: 8px 0;
+    }
+    
+    .header__container {
+        padding: 8px;
+    }
+    
+    .header__content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 8px;
+    }
+    
+    .header__search {
+        width: 100%;
+        font-size: 14px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+    .header__actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: row;
+        flex-wrap: wrap; /* Allow items to wrap */
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .logo img {
+        height: 40px; /* Smaller logo for mobile */
+    }
+    
+    .dark-mode-toggle {
+        width: 32px;
+        height: 32px;
+        margin-left: 8px;
+    }
+
+    /* Improve form elements on mobile */
+    .form-box {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 16px;
+    }
+
+    form input,
+    form select,
+    form textarea,
+    .form-box input {
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* Fix buttons in forms */
+    .gr-btn {
+        min-width: 0;
+        padding: 8px;
+        width: auto;
+    }
+
+    /* Fix form elements on mobile */
+    form input,
+    form select,
+    form textarea,
+    .form-box input,
+    input[type="date"],
+    select {
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 5px;
+        height: auto; /* Prevent fixed heights that can cut off content */
+        min-height: 44px; /* Ensure touch-friendly size */
+    }
+
+    /* Ensure date inputs display properly */
+    input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 8px; /* Make space for the calendar icon */
+        min-width: 100%; /* Ensure it takes full width */
+    }
+
+    /* Ensure question form elements are consistent */
+    .question-box form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .question-box textarea,
+    .question-box input,
+    .question-box select {
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 12px;
+    }
+    
+    /* Specifically target the due date selector */
+    .question-box input[type="date"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Fix buttons in forms */
+    .gr-btn {
+        min-width: 0;
+        padding: 8px 16px;
+        width: auto;
+        height: auto;
+    }
+}
+
+/* Additional breakpoint for very small screens */
+@media (max-width: 480px) {
+    .header__content {
+        gap: 6px;
+    }
+
+    .header__actions {
+        justify-content: center; /* Ensure centered on very small screens */
+    }
+    
+    nav ul {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    nav ul li a,
+    .header__content a,
+    .gr-logout {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+    
+    .sidebar button,
+    .sidebar a {
+        padding: 6px;
+        font-size: 11px;
+        margin: 0 4px; /* Reduced margin for smaller screens but still maintain spacing */
+    }
+
+    /* Ensure the form elements are properly sized on very small screens */
+    form input,
+    form select,
+    form textarea,
+    .form-box input,
+    input[type="date"] {
+        font-size: 14px; /* Keep font size readable */
+        padding: 10px;
+    }
+    
+    /* Ensure question box elements fit */
+    .question-box {
+        padding: 10px;
+    }
+}

@@ -39,9 +39,7 @@
     color: black;
 }
 
-.gr-announcement--help .gr-announcement__content {
-    background-color: rgba(255, 255, 255, 0.86);
-}
+
 
 /* question box form styling */
 .gr-form input,
@@ -233,7 +231,7 @@ body.dark-mode .gr-announcement__content {
 }
 
 body.dark-mode .gr-announcement__content {
-    color: black;
+    color: rgb(255, 255, 255);
 }
 
 body.dark-mode .gr-announcement__content a {
