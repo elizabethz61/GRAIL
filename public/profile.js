@@ -440,7 +440,7 @@ function initUserAccount() {
 
         var pfpEl = document.querySelector('.gr-user__logo');
 
-        var imageRef = firebase.database().ref('/images/' + params.get('user'));
+        var imageRef = firebase.database().ref('/images/' + questionUser.username);
         imageRef.once('value', function (snapshot) {
             const data = snapshot.val();
 
