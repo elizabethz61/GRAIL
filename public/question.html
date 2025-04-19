@@ -17,6 +17,18 @@
 
     <script src="script.js"></script>
     <script src="questions.js"></script>
+
+    <style>
+        .gr-content > .question-entry:hover {
+            background-color: #fafafa !important;
+            cursor: unset;
+        }
+
+        .gr-content .gr-flags {
+            position: absolute;
+            right: 24px;
+        }
+    </style>
 </head>
 <body>
     <header></header>
@@ -25,7 +37,7 @@
         <div class="sidebar gr-sidebar"></div>
         
         <div class="content gr-content">
-            <div class="content__question"></div>
+            <div class="content__question question-entry"></div>
 
             <div class="content__answers"></div>
         </div>

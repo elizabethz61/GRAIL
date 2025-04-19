@@ -7,6 +7,9 @@ function initFlags() {
 
     flagEls.forEach(flagEl => {
         flagEl.addEventListener('click', ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            
             var questionEl = ev.target.closest('.question-entry');
 
             var isFlagged = flagEl.getAttribute('fill') == 'red' ? true : false;
@@ -19,6 +22,44 @@ function initFlags() {
                     console.log('Error flagging post: ', error);
                 } else {
                     flagEl.setAttribute('fill', isFlagged ? 'black' : 'red');
+                }
+            });
+        });
+    });
+}
+
+function initSolveFlags() {
+    var solveEls = document.querySelectorAll('.gr-flags .gr-solve svg');
+
+    if (!solveEls || !solveEls.length) {
+        return;
+    }
+
+    solveEls.forEach(solveEl => {
+        if (solveEl.closest('.gr-solve').dataset.myQuestion != 'true') {
+            return;
+        }
+
+        solveEl.addEventListener('click', ev => {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            if (solveEl.closest('.gr-solve').dataset.myQuestion != 'true') {
+                return;
+            }
+
+            var questionEl = ev.target.closest('.question-entry');
+
+            var isSolved = solveEl.getAttribute('fill') == 'green' ? true : false;
+    
+            firebase.database().ref('posts/' + questionEl.dataset.key).update({
+                status: isSolved ? 'Unsolved' : 'Solved'
+            }, (error) => {
+                if (error) {
+                    // The write failed...
+                    console.log('Error setting post as solved: ', error);
+                } else {
+                    solveEl.setAttribute('fill', isSolved ? 'green' : 'black');
                 }
             });
         });
@@ -41,6 +82,7 @@ function initHeader() {
                 </div>
                 <div class="header__search-container">
                     <input type="text" class="header__search" placeholder="Search questions...">
+                    <div class="search__results" style="display: none;"></div>
                 </div>
                 <div class="header__actions">
                     <nav>
@@ -85,12 +127,83 @@ function initHeader() {
                 });
         });
     }
+
+    var allPosts = {};
+
+    //get all posts for search input
+    var ref = firebase.database().ref('/posts');
+    ref.once('value', function (snapshot) {
+        const data = snapshot.val();
+        if (data) {
+            allPosts = data;
+        }
+    }, function (error) {
+        console.log("Something went wrong loading question: " + error.code);
+    });
+
+    // init search
+    // doing js search for now, because current db solution only has equalTo search
+    // basically this is proof of concept, and if mga wants to adopt it, then can add actual search
+    var searchInputEl = document.querySelector('.header__search');
+    var searchResultsEl = document.querySelector('.search__results');
+
+    searchInputEl.value = '';
+
+    let debounceTimer;
+
+    searchInputEl.addEventListener('input', ev => {
+        clearTimeout(debounceTimer); // Reset the timer
+
+        debounceTimer = setTimeout(() => {
+            var searchResults = Object.keys(allPosts).filter(key => {
+                // if search query matches a title, return the item
+                if (allPosts[key].title && allPosts[key].title.toLowerCase().indexOf(searchInputEl.value.toLowerCase()) > -1) {
+                    return key;
+                }
+
+                if (allPosts[key].subject && allPosts[key].subject.toLowerCase().indexOf(searchInputEl.value.toLowerCase()) > -1) {
+                    return key;
+                }
+
+                if (allPosts[key].course && allPosts[key].course.toLowerCase().indexOf(searchInputEl.value.toLowerCase()) > -1) {
+                    return key;
+                }
+            });
+            
+            if (searchResults.length > 0) {
+                searchResultsEl.innerHTML = searchResults.map(key => {
+                    return `
+                        <a href="/question?key=${key}" class="search__result">
+                            <span class="search__title">${allPosts[key].title}</span>
+                            <span class="search__subject">${allPosts[key].subject}</span>
+                            <span class="search__course">${allPosts[key].course}</span>
+                        </a>
+                    `;
+                });
+            } else {
+                searchResultsEl.innerHTML = `
+                    <div class="search__result">
+                        No Results
+                    </div>
+                `;
+            }
+
+            searchResultsEl.style.display = 'block';
+        }, 500);
+
+    });
+
+    // hide results if user clicks out
+    document.addEventListener('click', (event) => {
+        // Check if the click was outside both the input and results
+        if (!searchInputEl.contains(event.target) && !searchInputEl.contains(event.target)) {
+            searchResultsEl.style.display = 'none';
+        }
+    });
 }
 
 function initSidebar() {
     let params = new URLSearchParams(document.location.search);
-
-    console.log('params', !!window.location.href && window.location.href.indexOf('answers') > -1);
 
     // when initializing sidebar, I was thinking we could use the same page "questions"
     // for all the question pages
@@ -99,8 +212,10 @@ function initSidebar() {
     // only the current users questions or only the unsolved questions, etc
     var sidebarHtml =  `
         <a href="index" ${ 
-            !!window.location.href 
-            && window.location.href.indexOf('index') > -1 ? `class="selected"` : ''}>Home</a>
+            (!!window.location.href 
+            && window.location.href.indexOf('index') > -1)
+            || (window.location.pathname == '/')
+            ? `class="selected"` : ''}>Home</a>
         <a href="questions?where=myquestions" ${ 
             !!window.location.href 
             && window.location.href.indexOf('questions') > -1 
@@ -288,10 +403,11 @@ function initRegister() {
     var passwordEl = document.querySelector('#password');
     var confirmPasswordEl = document.querySelector('#confirm-password');
     var usernameEl = document.querySelector('#username');
+    var emailEl = document.querySelector('#email');
     var successEl = document.querySelector('.gr-form__success');
     var errorEl = document.querySelector('.gr-form__error');
 
-    if (!registerEl || !confirmPasswordEl || !passwordEl || !usernameEl) {
+    if (!registerEl || !confirmPasswordEl || !passwordEl || !usernameEl || !emailEl) {
         return;
     }
 
@@ -303,13 +419,34 @@ function initRegister() {
             confirmPasswordEl.setCustomValidity('');
         }
     });
+
+    emailEl.addEventListener('change', ev => {
+        if (!emailEl.value.endsWith('@mga.edu')) {
+            emailEl.setCustomValidity('Email must be an @mga.edu email address.');
+            emailEl.reportValidity();
+        } else {
+            emailEl.setCustomValidity('');
+        }
+    });
     
     registerEl.addEventListener('submit', ev => {
         ev.preventDefault();
 
+        if (!ev.target.checkValidity()) {
+            ev.target.reportValidity();
+            return;
+        }
+
         // get data from form as object
         const formData = new FormData(registerEl);
         const input = Object.fromEntries(formData.entries());
+
+        if (!input.email.endsWith('@mga.edu')) {
+            emailEl.setCustomValidity('Email must be an @mga.edu email address.');
+            emailEl.reportValidity();
+        } else {
+            emailEl.setCustomValidity('');
+        }
 
         firebase.auth().createUserWithEmailAndPassword(input.email, input.password)
             .then((userCredential) => {
@@ -439,25 +576,43 @@ function initQuestions() {
                     }
                     
                     return `
-                        <div class="question-entry" data-key="${key}">
+                        <a href="/question?key=${key}" class="question-entry" data-key="${key}">
                             <div class="question-entry__info">
                                 <h4 class="question-entry__title">${data[key].title || 'Untitled'}</h4>
                                 <span class="question-entry__subject">${data[key].subject}</span>
                             </div>
                             
                             <div class="question-entry__actions">
-                                ${ currentUser.superuser || (data[key].author == currentUser.username && data[key].flagged) ? `
-                                    <div class="gr-flag">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
-                                            <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
-                                        </svg>
-                                        ${ currentUser.superuser ? '<div class="tooltip">Click to flag the question and hide it from users.</div>' : '' }
-                                    </div>
-                                ` : ''}
+                             <div class="gr-flags">
+                                    ${ data[key].author == currentUser.username || data[key].status == 'Solved' ? `
+                                        <div class="gr-solve" data-my-question="${data[key].author == currentUser.username}">
+                                            <svg 
+                                                xmlns="http://www.w3.org/2000/svg" 
+                                                height="24px" viewBox="0 -960 960 960" width="24px" 
+                                                fill="${data[key].status && data[key].status == 'Solved' ? 'green' : 'black'}"
+                                            >
+                                                <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/>
+                                            </svg>
+
+                                            <div class="tooltip">
+                                                ${data[key].author == currentUser.username ? 'Click to set your question as solved.' : data[key].status == 'Solved' ? 'This question is solved' : ''}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${ currentUser.superuser || (data[key].author == currentUser.username && data[key].flagged) ? `
+                                        <div class="gr-flag">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
+                                                <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
+                                            </svg>
+                                            ${ currentUser.superuser ? '<div class="tooltip">Click to flag the question and hide it from users.</div>' : '' }
+                                        </div>
+                                    ` : ''}
+                                </div>
                                 <span class="question-entry__duedate">Due: ${date}</span>
-                                <a href="/question?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
+                                <button class="gr-btn gr-secondary gr-answer">View</button>
                             </div>
-                        </div>
+                        </a>
                     `
                 })
                 .join('');
@@ -468,6 +623,8 @@ function initQuestions() {
             if (currentUser.superuser) {
                 initFlags();
             }
+
+            initSolveFlags();
         }
     }, function (error) {
         console.log("Something went wrong logging user in: " + error.code);
@@ -524,7 +681,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // check user status
     firebase.auth().onAuthStateChanged((user) => {
-        console.log("test");
         if (user) {
             var userInfo = {};
             // User is signed in

@@ -1,3 +1,12 @@
+var courses = {
+    'ITEC2260': 'ITEC 2260 - Intro to Computer Programming',
+    'ITEC2270': 'ITEC 2270 - Application Development',
+    'ITEC3155': 'ITEC 3155 - Systems Analysis and Design',
+    'ITEC3235': 'ITEC 3235 - Human Computer Interaction',
+    'ITEC4261': 'ITEC 4261 - Intro to JAVA Programming',
+    'ITEC4264': 'ITEC 4264 - Data Structures'
+}
+
 function initQuestionsPage(currentUser) {
     var contentEl = document.querySelector('.gr-content');
     let params = new URLSearchParams(document.location.search);
@@ -7,8 +16,6 @@ function initQuestionsPage(currentUser) {
     if (!contentEl) {
         return;
     }
-
-    var isQuestion = true;
 
     var ref = null;
 
@@ -122,25 +129,44 @@ function initQuestionsPage(currentUser) {
                     }
                     
                     return `
-                        <div class="question-entry" data-key="${key}">
+                        <a href="/question?key=${key}" class="question-entry" data-key="${key}">
                             <div class="question-entry__info">
                                 <h4 class="question-entry__title">${data[key].title || 'Untitled'}</h4>
                                 <span class="question-entry__subject">${data[key].subject}</span>
+                                <span style="margin-top: 6px;" class="question-entry__subject">${courses[data[key].course]}</span>
                             </div>
                             
                             <div class="question-entry__actions">
-                                ${ currentUser.superuser || (data[key].author == currentUser.username && data[key].flagged) ? `
-                                    <div class="gr-flag">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
-                                            <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
-                                        </svg>
-                                        ${ currentUser.superuser ? '<div class="tooltip">Click to flag the question and hide it from users.</div>' : '' }
-                                    </div>
-                                ` : ''}
+                                <div class="gr-flags">
+                                    ${ data[key].author == currentUser.username || data[key].status == 'Solved' ? `
+                                        <div class="gr-solve" data-my-question="${data[key].author == currentUser.username}">
+                                            <svg 
+                                                xmlns="http://www.w3.org/2000/svg" 
+                                                height="24px" viewBox="0 -960 960 960" width="24px" 
+                                                fill="${data[key].status && data[key].status == 'Solved' ? 'green' : 'black'}"
+                                            >
+                                                <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/>
+                                            </svg>
+
+                                            <div class="tooltip">
+                                                ${data[key].author == currentUser.username ? 'Click to set your question as solved.' : data[key].status == 'Solved' ? 'This question is solved' : ''}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${ currentUser.superuser || (data[key].author == currentUser.username && data[key].flagged) ? `
+                                        <div class="gr-flag">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data[key].flagged && data[key].flagged == true ? 'red' : '#000000'}">
+                                                <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
+                                            </svg>
+                                            ${ currentUser.superuser ? '<div class="tooltip">Click to flag the question and hide it from users.</div>' : '' }
+                                        </div>
+                                    ` : ''}
+                                </div>
                                 <span class="question-entry__duedate">Due: ${date}</span>
-                                <a href="/question?key=${key}" class="gr-btn gr-secondary gr-answer">Answer</a>
+                                <button type="button" class="gr-btn gr-secondary gr-answer">View</button>
                             </div>
-                        </div>
+                        </a>
                     `
                 })
                 .join('');
@@ -156,12 +182,14 @@ function initQuestionsPage(currentUser) {
             if (currentUser.superuser) {
                 initQuestionFlags();
             }
+
+            initQuestionSolvedFlags();
         } else {
             contentEl.innerHTML = `
                 <div class="qr-questions question-box">
                     <h3>${title}</h3>
 
-                    <p>No questions yet, go ahead and <a href="/index">ask one!</a></p>
+                    <p>${title.indexOf('Solved') > -1 ? 'No solved questions yet, go ahead and <a href="/questions">solve one!</a>' : 'No questions yet, go ahead and <a href="/index">ask one!</a>'}</p>
                 </div>
             `;
         }
@@ -182,6 +210,8 @@ function initSingleQuestion() {
         return;
     }
 
+    contentQuestionEl.dataset.key = params.get('key');
+
     var questionTitle = 'Untitled';
 
     // display current question info to user
@@ -199,6 +229,33 @@ function initSingleQuestion() {
             questionTitle = data.title;
 
             contentQuestionEl.innerHTML = `
+                <div class="gr-flags">
+                    ${ data.author == currentUser.username || data.status == 'Solved' ? `
+                        <div class="gr-solve" data-my-question="${data.author == currentUser.username}">
+                            <svg 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                height="24px" viewBox="0 -960 960 960" width="24px" 
+                                fill="${data.status && data.status == 'Solved' ? 'green' : 'black'}"
+                            >
+                                <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/>
+                            </svg>
+
+                            <div class="tooltip">
+                                ${data.author == currentUser.username ? 'Click to set your question as solved.' : data.status == 'Solved' ? 'This question is solved' : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${ currentUser.superuser || (data.author == currentUser.username && data.flagged) ? `
+                        <div class="gr-flag">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="${data.flagged && data.flagged == true ? 'red' : '#000000'}">
+                                <path d="M200-120v-680h360l16 80h224v400H520l-16-80H280v280h-80Zm300-440Zm86 160h134v-240H510l-16-80H280v240h290l16 80Z"/>
+                            </svg>
+                            ${ currentUser.superuser ? '<div class="tooltip">Click to flag the question and hide it from users.</div>' : '' }
+                        </div>
+                    ` : ''}
+                </div>
+                
                 <div class="content__question-title">
                     <h1>${data.title || 'Untitled'}</h1>
                 </div>
@@ -222,8 +279,6 @@ function initSingleQuestion() {
             userRef.once('value', function (userSnapshot) {
                 var questionUser = userSnapshot.val();
 
-                console.log("questionUser", questionUser, Object.keys(questionUser)[0]);
-
                 // get/set logo for user info
                 userEl.insertAdjacentHTML('afterbegin', `
                     <a href="user?user=${Object.keys(questionUser)[0]}"><div class="user__logo">${data.img ? `<img src="${data.img}" alt="User">` : data.author[0].toUpperCase()}</div></a>
@@ -238,6 +293,9 @@ function initSingleQuestion() {
             }, function (error) {
                 console.log("Something went wrong fetching question user: " + error.code);
             });
+
+            initQuestionSolvedFlags();
+            initQuestionFlags();
         }
     }, function (error) {
         console.log("Something went wrong loading question: " + error.code);
@@ -369,7 +427,7 @@ function initSingleQuestion() {
 }
 
 function initAnswerFlags() {
-    var flagEls = document.querySelectorAll('.content__answer .gr-flag svg');
+    var flagEls = document.querySelectorAll('.content__answers .gr-flags .gr-flag svg');
 
     if (!flagEls) {
         return;
@@ -377,6 +435,9 @@ function initAnswerFlags() {
 
     flagEls.forEach(flagEl => {
         flagEl.addEventListener('click', ev => {
+            ev.stopPropagation();
+            ev.preventDefault();
+
             var answerEl = ev.target.closest('.content__answer');
 
             var isFlagged = flagEl.getAttribute('fill') == 'red' ? true : false;
@@ -395,6 +456,44 @@ function initAnswerFlags() {
     });
 }
 
+function initQuestionSolvedFlags() {
+    var solveEls = document.querySelectorAll('.gr-flags .gr-solve svg');
+
+    if (!solveEls || !solveEls.length) {
+        return;
+    }
+
+    solveEls.forEach(solveEl => {
+        if (solveEl.closest('.gr-solve').dataset.myQuestion != 'true') {
+            return;
+        }
+
+        solveEl.addEventListener('click', ev => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            
+            if (solveEl.closest('.gr-solve').dataset.myQuestion != 'true') {
+                return;
+            }
+
+            var questionEl = ev.target.closest('.question-entry');
+
+            var isSolved = solveEl.getAttribute('fill') == 'green' ? true : false;
+    
+            firebase.database().ref('posts/' + questionEl.dataset.key).update({
+                status: isSolved ? 'Unsolved' : 'Solved'
+            }, (error) => {
+                if (error) {
+                    // The write failed...
+                    console.log('Error setting post as solved: ', error);
+                } else {
+                    solveEl.setAttribute('fill', isSolved ? 'black' : 'green');
+                }
+            });
+        });
+    });
+}
+
 function initQuestionFlags() {
     var flagEls = document.querySelectorAll('.question-entry .gr-flag svg');
 
@@ -404,6 +503,9 @@ function initQuestionFlags() {
 
     flagEls.forEach(flagEl => {
         flagEl.addEventListener('click', ev => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            
             var questionEl = ev.target.closest('.question-entry');
 
             var isFlagged = flagEl.getAttribute('fill') == 'red' ? true : false;

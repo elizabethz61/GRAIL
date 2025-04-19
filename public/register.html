@@ -22,11 +22,17 @@
             <form id="register-form">
                 <input type="text" id="username" name="username" placeholder="Username" required>
 
-                <input type="email" id="email" name="email" placeholder="Email (@mga.edu)" required>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="Email (@mga.edu)" 
+                    title="Email must be an @mga.edu email address."
+                    required
+                >
 
                 <input 
                     pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$" 
-                    title="Password must be at least 6 characters, include at least one uppercase letter, one lowercase letter, one number, and one special character." 
                     type="password" 
                     id="password" 
                     name="password" 
@@ -36,16 +42,21 @@
 
                 <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required>
 
+                <small>Password must be at least 6 characters, include at least one uppercase letter, one lowercase letter, one number, and one special character.</small>
+
                 <div class="gr-terms">
                     <input name="terms" type="checkbox" required>
                     <label for="terms">
-                        I acknowledge that I have read, understand, and agree to <a href="terms">Terms of Service</a> and <a href="acceptableUse">Acceptable Use Policy</a>
+                        <small>
+                            I acknowledge that I have read, understand, and agree to <a href="terms">Terms of Service</a> and <a href="acceptableUse">Acceptable Use Policy</a>
+                        </small>
                     </label>
                 </div>
 
                 <button type="submit">Register</button>
             </form>
-            <p>Already have an account? <a href="login">Log in</a></p>
+            
+            <small>Already have an account? <a href="login">Log in</a></small>
 
             <div class="gr-form__error" style="display: none;">Something went wrong, please try again or contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>.</div>
             <div class="gr-form__success" style="display: none;">

@@ -27,6 +27,10 @@
 .gr-announcement--grail img {
     top: -500px;
 }
+
+.gr-announcement--help {
+    background: linear-gradient(to right, #ab3333, #3d2fac);
+}
   
 .gr-announcement__content {
     display: flex;
@@ -41,6 +45,15 @@
     padding: 24px;
     text-align: left;
     color: black;
+}
+
+.gr-announcement--help .gr-announcement__content {
+    color: white;
+}
+
+.gr-announcement--help .gr-announcement__content a {
+    color: white;
+    text-decoration: underline;
 }
 
 /* Media queries for responsive design */
@@ -124,6 +137,11 @@
     flex-direction: row;
 }
 
+.question-entry:hover {
+    background-color: #efefef;
+    cursor: pointer;
+}
+
 .question-entry__title {
     margin: 0 0 8px 0;
     font-size: 16px;
@@ -151,9 +169,12 @@
     flex-direction: column;
 }
 
-.question-entry__subject {
+.question-entry__subject,
+.search__course,
+.search__subject {
     font-weight: bold;
     font-size: 12px;
+    color: var(--primary);
 }
 
 .question-entry__duedate {
@@ -172,7 +193,14 @@
     white-space: pre;
 }
 
-.gr-flag {
+.gr-flags {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.gr-flag,
+.gr-solve {
     position: relative;
     display: inline-block;
 }
@@ -193,7 +221,8 @@
     margin-left: -60px;
 }
 
-.gr-flag .tooltip::after {
+.gr-flag .tooltip::after,
+.gr-solve .tooltip::after {
     content: "";
     position: absolute;
     bottom: 100%;
@@ -204,7 +233,8 @@
     border-color: transparent transparent #040505 transparent;
 }
 
-.gr-flag:hover .tooltip {
+.gr-flag:hover .tooltip,
+.gr-solve:hover .tooltip {
     visibility: visible;
 }
 

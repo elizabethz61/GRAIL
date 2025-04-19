@@ -229,6 +229,13 @@ function initProfile() {
 
 function initModForm() {
     var banAccountEl = document.querySelector('.gr-ban');
+    var modEl = document.querySelector('.gr-mod');
+    var userEl = document.querySelector('.gr-user');
+
+    if (!modEl || !banAccountEl || !userEl) {
+        return;
+    }
+
     var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
 
     banAccountEl.addEventListener('click', ev => {
@@ -236,7 +243,7 @@ function initModForm() {
 
         var userIsBanned = banAccountEl.innerHTML == 'Activate Account';
 
-        firebase.database().ref('users/' + currentUser.uid).update({
+        firebase.database().ref('users/' + userEl.dataset.key).update({
             banned: !userIsBanned
         }, (error) => {
             if (error) {
@@ -244,6 +251,23 @@ function initModForm() {
                 console.log('Error banning/activating user: ', error);
             } else {
                 banAccountEl.innerHTML = userIsBanned ? 'Ban Account' : 'Activate Account';
+            }
+        });
+    });
+
+    modEl.addEventListener('click', ev => {
+        ev.preventDefault();
+
+        var userIsMod = modEl.innerHTML == 'Dismiss Moderator';
+
+        firebase.database().ref('users/' + userEl.dataset.key).update({
+            superuser: !userIsMod
+        }, (error) => {
+            if (error) {
+                // The write failed...
+                console.log('Error appointing/dismissing moderator: ', error);
+            } else {
+                modEl.innerHTML = !userIsMod ? 'Dismiss Moderator' : 'Appoint Moderator';
             }
         });
     });
@@ -265,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = snapshot.val();
             
             var html = `
-                <div class="gr-user">
+                <div class="gr-user" data-key="${params.get('user')}">
                     <h1>Profile</h1>
                     <div class="gr-user__header">
                         <div class="gr-user__logo">E</div>
@@ -275,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="gr-user__info">
                         <div class="gr-user__section">
                             <span>Name</span>
-                            <span>${data.firstName ?? '---'} ${data.lastName}</span>
+                            <span>${data.firstName ?? '---'} ${data.lastName ?? '---'}</span>
                         </div>
                        
                         <div class="gr-user__section">
@@ -309,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentUser.superuser) {
                 html += `
                     <button class="gr-btn gr-secondary gr-ban" type="button">${ data.banned ? 'Activate' : 'Ban' } Account</button>
+                    <button class="gr-btn gr-secondary gr-mod" type="button">${ data.superuser ? 'Dismiss' : 'Appoint' } Moderator</button>
                 `;
             }
 
