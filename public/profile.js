@@ -303,7 +303,7 @@ function initProfilePic() {
                     }
                 });
 
-                localStorage.setItem('profilePic', base64String);
+                localStorage.setItem('profilePic', JSON.stringify({src: base64String}));
             });
         }
     });

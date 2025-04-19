@@ -80,6 +80,11 @@ function initHeader() {
 
     // if there is a user logged in, display log out menu item instead of log in and regsiter
     var currentUser = localStorage.user ? JSON.parse(localStorage.user) : null;
+    var profilePic = null;
+
+    if (localStorage.getItem('profilePic')) {
+        profilePic = JSON.parse(localStorage.getItem('profilePic')).src;
+    }
 
     var headerHtml = `
         <div class="header__container">
@@ -108,7 +113,10 @@ function initHeader() {
                     <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
                         <span class="dark-mode-toggle__icon">🌙</span>
                     </button>
-                    ${ currentUser ? `<a class="gr-profile" href="profile">${currentUser.username[0].toUpperCase()}</a>` : '' }
+                    ${ currentUser 
+                        ? `<a class="gr-profile" href="profile">${profilePic ? `<img src="${profilePic}" alt="Profile Pic">` : currentUser.username[0].toUpperCase()}</a>` 
+                        : ''
+                    }
                 </div>
             </div>
         </div>
@@ -118,6 +126,28 @@ function initHeader() {
 
     if (headerEl) {
         headerEl.innerHTML = headerHtml;
+    }
+
+    // profile pic
+    // get user profile pic if it exists
+    // if already added to cache, skip
+    if (!localStorage.getItem('profilePic')) {
+        var imageRef = firebase.database().ref('/images/' + currentUser.username);
+        imageRef.once('value', function (snapshot) {
+            const imageData = snapshot.val();
+
+            if (imageData && imageData.src) {
+                localStorage.setItem('profilePic', JSON.stringify(imageData));
+
+                var profileImgEl = headerEl.querySelector('.gr-profile');
+
+                if (profileImgEl) {
+                    profileImgEl.innerHTML = `<img src="${imageData.src}" alt="Profile Pic">`;
+                }
+            }
+        }, function (error) {
+            console.log("Something went wrong fetching pfp: " + error.code);
+        });
     }
 
     var logoutEl = document.querySelector(".gr-logout");
@@ -681,7 +711,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // also takes care of issue when dark mode tries to load before the header menu exists
     initDarkMode();
 
-
     // check user status
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
@@ -703,16 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 localStorage.setItem('user', JSON.stringify(userInfo));
-
-                // get user profile pic if it exists
-                var imageRef = firebase.database().ref('/images/' + userInfo.username);
-                imageRef.once('value', function (snapshot) {
-                    const imageData = snapshot.val();
-
-                    if (imageData) {
-                        localStorage.setItem('profilePic', JSON.stringify(imageData));
-                    }
-                })
             }, function (error) {
                 console.log("Something went wrong loading user: " + error.code);
             });
