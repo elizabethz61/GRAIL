@@ -131,7 +131,7 @@ function initHeader() {
     // profile pic
     // get user profile pic if it exists
     // if already added to cache, skip
-    if (!localStorage.getItem('profilePic')) {
+    if (!localStorage.getItem('profilePic') && currentUser && currentUser.username) {
         var imageRef = firebase.database().ref('/images/' + currentUser.username);
         imageRef.once('value', function (snapshot) {
             const imageData = snapshot.val();
