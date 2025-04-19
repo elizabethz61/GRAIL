@@ -37,19 +37,6 @@
     flex-direction: column;
 }
 
-/* .question-entry__meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 12px;
-} */
-
-.question-entry__subject {
-    font-weight: bold;
-    font-size: 12px;
-}
-
 .question-entry__duedate {
     color: #d04444;
     font-size: 12px;
@@ -104,10 +91,10 @@
     display: flex;
     flex-direction: column;
 }
-
+/* 
 .gr-flag {
     margin-left: auto;
-}
+} */
 
 .user__logo {
     width: 50px;

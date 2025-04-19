@@ -277,13 +277,18 @@ body.dark-mode .gr-announcement__content {
     padding: 0 48px;
     bottom: 0;
     align-content: center;
-    color: rgb(255, 255, 255);
+    /* color: rgb(255, 255, 255); */
 }
 
-body.dark-mode .gr-announcement__content {
+/* body.dark-mode .gr-announcement__content {
     color: rgb(255, 255, 255);
-}
+} */
 
 body.dark-mode .gr-announcement__content a {
     color: var(--primary-dark);
+}
+
+body.dark-mode .gr-announcement--help a {
+    color: white;
+    text-decoration: underline;
 }

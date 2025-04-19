@@ -1,3 +1,12 @@
+var courses = {
+    'ITEC2260': 'ITEC 2260 - Intro to Computer Programming',
+    'ITEC2270': 'ITEC 2270 - Application Development',
+    'ITEC3155': 'ITEC 3155 - Systems Analysis and Design',
+    'ITEC3235': 'ITEC 3235 - Human Computer Interaction',
+    'ITEC4261': 'ITEC 4261 - Intro to JAVA Programming',
+    'ITEC4264': 'ITEC 4264 - Data Structures'
+}
+
 function initFlags() {
     var flagEls = document.querySelectorAll('.question-entry .question-entry__actions svg');
 
@@ -171,15 +180,13 @@ function initHeader() {
             });
             
             if (searchResults.length > 0) {
-                searchResultsEl.innerHTML = searchResults.map(key => {
-                    return `
-                        <a href="/question?key=${key}" class="search__result">
-                            <span class="search__title">${allPosts[key].title}</span>
-                            <span class="search__subject">${allPosts[key].subject}</span>
-                            <span class="search__course">${allPosts[key].course}</span>
-                        </a>
-                    `;
-                });
+                searchResultsEl.innerHTML = searchResults.map(key => `
+                    <a href="/question?key=${key}" class="search__result">
+                        <span class="search__title">${allPosts[key].title}</span>
+                        <span class="search__subject">${allPosts[key].subject}</span>
+                        <span class="search__course">${allPosts[key].course}</span>
+                    </a>
+                `).join('');
             } else {
                 searchResultsEl.innerHTML = `
                     <div class="search__result">
@@ -198,6 +205,7 @@ function initHeader() {
         // Check if the click was outside both the input and results
         if (!searchInputEl.contains(event.target) && !searchInputEl.contains(event.target)) {
             searchResultsEl.style.display = 'none';
+            searchInputEl.value = '';
         }
     });
 }
@@ -525,7 +533,7 @@ function initQuestions() {
                     }
                 })
                 .map(key => {
-                    var date = 'N/A';
+                    var date = null;
 
                     // format the date nicely for user display
                     if (data[key].dueDate) {
@@ -580,6 +588,7 @@ function initQuestions() {
                             <div class="question-entry__info">
                                 <h4 class="question-entry__title">${data[key].title || 'Untitled'}</h4>
                                 <span class="question-entry__subject">${data[key].subject}</span>
+                                <span style="margin-top: 6px;" class="question-entry__subject">${courses[data[key].course]}</span>
                             </div>
                             
                             <div class="question-entry__actions">
@@ -609,7 +618,7 @@ function initQuestions() {
                                         </div>
                                     ` : ''}
                                 </div>
-                                <span class="question-entry__duedate">Due: ${date}</span>
+                                ${date ? `<span class="question-entry__duedate">Due: ${date}</span>` : ''}
                                 <button class="gr-btn gr-secondary gr-answer">View</button>
                             </div>
                         </a>

@@ -78,7 +78,7 @@ function initQuestionsPage(currentUser) {
                     }
                 })
                 .map(key => {
-                    var date = 'N/A';
+                    var date = null;
 
                     // format the date nicely for user display
                     if (data[key].dueDate) {
@@ -163,7 +163,7 @@ function initQuestionsPage(currentUser) {
                                         </div>
                                     ` : ''}
                                 </div>
-                                <span class="question-entry__duedate">Due: ${date}</span>
+                                ${date ? `<span class="question-entry__duedate">Due: ${date}</span>` : ''}
                                 <button type="button" class="gr-btn gr-secondary gr-answer">View</button>
                             </div>
                         </a>
