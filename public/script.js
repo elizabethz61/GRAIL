@@ -360,8 +360,6 @@ function initLogin() {
         return;
     }
 
-    var submitEl = loginEl.querySelector('button[type="submit"');
-
     loginEl.addEventListener('submit', ev => {
         ev.preventDefault();
 
@@ -415,7 +413,7 @@ function initRegister() {
     var successEl = document.querySelector('.gr-form__success');
     var errorEl = document.querySelector('.gr-form__error');
 
-    if (!registerEl || !confirmPasswordEl || !passwordEl || !usernameEl || !emailEl) {
+    if (!registerEl || !confirmPasswordEl || !passwordEl || !usernameEl || !emailEl || !errorEl) {
         return;
     }
 
@@ -666,19 +664,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // load header in js so we dont need to add the same html to each page
     initHeader();
 
-    // get current user from session
-    var currentUser = null;
-
-    // if (localStorage.getItem('user')) {
-    //     currentUser = JSON.parse(localStorage.user);
-    // }
-
+    // load sidebar in js so we dont need to add the same html to each page
     initSidebar();
 
+    // if login page, initialize login form
     if (window.location.href.indexOf('login') > -1) {
         initLogin();
     }
 
+    // if register page, initialize login form
     if (window.location.href.indexOf('register') > -1) {
         initRegister();
     }
@@ -709,6 +703,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 localStorage.setItem('user', JSON.stringify(userInfo));
+
+                // get user profile pic if it exists
+                var imageRef = firebase.database().ref('/images/' + userInfo.username);
+                imageRef.once('value', function (snapshot) {
+                    const imageData = snapshot.val();
+
+                    if (imageData) {
+                        localStorage.setItem('profilePic', JSON.stringify(imageData));
+                    }
+                })
             }, function (error) {
                 console.log("Something went wrong loading user: " + error.code);
             });

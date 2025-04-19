@@ -278,11 +278,6 @@ function initSingleQuestion() {
             var userRef = firebase.database().ref('/users').orderByChild('username').equalTo(data.author); // fixme - if user doesn't exist?
             userRef.once('value', function (userSnapshot) {
                 var questionUser = userSnapshot.val();
-
-                // get/set logo for user info
-                userEl.insertAdjacentHTML('afterbegin', `
-                    <a href="user?user=${Object.keys(questionUser)[0]}"><div class="user__logo">${data.img ? `<img src="${data.img}" alt="User">` : data.author[0].toUpperCase()}</div></a>
-                `);
                                  
                 // get/set name for user info
                 userInfoEl.insertAdjacentHTML('afterbegin', `
@@ -290,8 +285,55 @@ function initSingleQuestion() {
                         ${ data.author }
                     </span>
                 `);
+
+                return questionUser[0];
             }, function (error) {
                 console.log("Something went wrong fetching question user: " + error.code);
+            }).then(res => {
+                var questionUser = Object.values(res.val())[0];
+
+                if (questionUser.username == currentUser.username) {
+                    var profilePic = null;
+
+                    if (localStorage.getItem('profilePic')) {
+                        profilePic = JSON.parse(localStorage.getItem('profilePic')).src;
+                    }
+                    
+                    // get/set logo for current user info
+                    userEl.insertAdjacentHTML('afterbegin', `
+                        <a href="user?user=${currentUser.uid}"><div class="user__logo">
+                            ${profilePic 
+                                ? `<img src="${profilePic}" alt="Profile Pic">` 
+                                : currentUser.username[0].toUpperCase()}
+                            </div>
+                        </a>
+                    `);
+
+                    return;
+                }
+
+                return questionUser;
+            }).then(questionUser => {
+                if (!questionUser) {
+                    return;
+                }
+
+                var imageRef = firebase.database().ref('/images/' + questionUser.username);
+                imageRef.once('value', function (snapshot) {
+                    const imageData = snapshot.val();
+
+                    // display pfp to user
+                    userEl.insertAdjacentHTML('afterbegin', `
+                        <a href="user?user=${questionUser.uid}"><div class="user__logo">
+                            ${imageData && imageData.src 
+                                ? `<img src="${imageData && imageData.src}" alt="Profile Pic">` 
+                                : questionUser.username[0].toUpperCase()}
+                            </div>
+                        </a>
+                    `);
+                }, function (error) {
+                    console.log("Something went wrong loading profile pic: " + error.code);
+                });
             });
 
             initQuestionSolvedFlags();
