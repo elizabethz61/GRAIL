@@ -318,6 +318,8 @@ function initProfilePic() {
             .catch((error) => {
                 console.error("error deleting profile pic > ", error);
             });
+
+        localStorage.removeItem('profilePic');
     });
       
     var imageRef = firebase.database().ref('/images/' + currentUser.username);
