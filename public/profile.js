@@ -322,23 +322,25 @@ function initProfilePic() {
         localStorage.removeItem('profilePic');
     });
       
-    var imageRef = firebase.database().ref('/images/' + currentUser.username);
-    imageRef.once('value', function (snapshot) {
-        const data = snapshot.val();
+    if (currentUser && currentUser.username) {
+        var imageRef = firebase.database().ref('/images/' + currentUser.username);
+        imageRef.once('value', function (snapshot) {
+            const data = snapshot.val();
 
-        if (data && data.src) {
-            
-            // display image to user
-            profileImageEl.innerHTML = `
-                <img src="${data.src}" alt="Profile Pic">
-            `;
+            if (data && data.src) {
+                
+                // display image to user
+                profileImageEl.innerHTML = `
+                    <img src="${data.src}" alt="Profile Pic">
+                `;
 
-        } else {
-            profileImageEl.innerHTML = currentUser.username[0].toUpperCase();
-        }
-    }, function (error) {
-        console.log("Something went wrong loading profile pic: " + error.code);
-    });
+            } else {
+                profileImageEl.innerHTML = currentUser.username[0].toUpperCase();
+            }
+        }, function (error) {
+            console.log("Something went wrong loading profile pic: " + error.code);
+        });
+    }
 }
 
 function initUserAccount() {
