@@ -169,16 +169,19 @@ function initHeader() {
 
     var allPosts = {};
 
-    //get all posts for search input
-    var ref = firebase.database().ref('/posts');
-    ref.once('value', function (snapshot) {
-        const data = snapshot.val();
-        if (data) {
-            allPosts = data;
-        }
-    }, function (error) {
-        console.log("Something went wrong loading question: " + error.code);
-    });
+    // only show search results to logged in users
+    if (currentUser) {
+        //get all posts for search input
+        var ref = firebase.database().ref('/posts');
+        ref.once('value', function (snapshot) {
+            const data = snapshot.val();
+            if (data) {
+                allPosts = data;
+            }
+        }, function (error) {
+            console.log("Something went wrong loading question: " + error.code);
+        });
+    }
 
     // init search
     // doing js search for now, because current db solution only has equalTo search
@@ -492,15 +495,23 @@ function initLogin() {
                 // Signed in
                 var user = userCredential.user;
 
+                // log user back out if their email isn't verified
+                if (!user.emailVerified) {
+                    errorEl.innerHTML = `Error: Your email address has not been verified. Please verify your email address to continue.`;
+                    errorEl.style.display = 'block';
+
+                    return firebase.auth().signOut();
+                }
+
                 var ref = firebase.database().ref('/users/' + user.uid);
                 ref.once('value', function (snapshot) {
                     const data = snapshot.val();
                     if (data) {
-                        if (!user.emailVerified || user.disabled || (data.banned && data.banned == true)) {
-                            errorEl.innerHTML = !user.emailVerified 
-                                ? `Error: Your email address has not been verified. Please verify your email address to continue.` 
-                                : `Error: Your account has been disabled, please contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a> for further information.`;
+                        if (data.banned && data.banned == true) {                            
+                            errorEl.innerHTML = `Error: Your account has been disabled, please contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a> for further information.`;
                             errorEl.style.display = 'block';
+
+                            return firebase.auth().signOut();
                         } else {
                             window.location.href = 'index';
                         }
@@ -510,9 +521,14 @@ function initLogin() {
                 });
             })
             .catch((error) => {
-                var errorMessage = JSON.parse(error.message);
+                console.log("Error logging user in > ", error);
 
-                errorEl.innerHTML = errorMessage && errorMessage.error && errorMessage.error.message ? `Error: ${errorMessage.error.message}` : `Something went wrong, please try again or contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a>`;
+                if (error && error.code == 'auth/user-disabled') {
+                    errorEl.innerHTML = `Error: Your account has been disabled, please contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a> for further information.`;
+                } else {
+                    errorEl.innerHTML = `Something went wrong, please try again or contact <a href="mailto:helpdesk@mga.edu">helpdesk@mga.edu</a> for further information.`;
+                }
+
                 errorEl.style.display = 'block';
             });
     });
@@ -594,7 +610,10 @@ function initRegister() {
 
                         errorEl.style.display = 'none';
 
-                        successEl.innerHTML = `Verification email sent to: ` + user.email + `. Once verified, navigate to the <a href="login">login page</a> to sign in.`;
+                        successEl.innerHTML = `
+                            Verification email sent to: ` + user.email + `. Once verified, navigate to the <a href="login">login page</a> to sign in. 
+                            <br/> <small>If you do not see the email, be sure to check your Spam or Junk folders and wait at least five minutes. </small>
+                        `;
                         successEl.style.display = 'block';
                     })
                     .catch((error) => {
