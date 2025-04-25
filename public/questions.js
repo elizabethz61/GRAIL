@@ -1,3 +1,5 @@
+var selectedFiles = [];
+
 var courses = {
     'ITEC2260': 'ITEC 2260 - Intro to Computer Programming',
     'ITEC2270': 'ITEC 2270 - Application Development',
@@ -198,6 +200,35 @@ function initQuestionsPage(currentUser) {
     });
 }
 
+function renderFileList() {
+    // logic for file selecting
+    var fileListEl = document.querySelector('.content__answer.content__answer-form ul');
+    fileListEl.innerHTML = '';
+    
+    this.selectedFiles.forEach((file, index) => {
+        const li = document.createElement('li');
+        li.className = 'file-item';
+
+        const span = document.createElement('span');
+        span.className = 'file-name';
+        span.textContent = file.name;
+
+        const removeIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        removeIcon.setAttribute("viewBox", "0 0 24 24");
+        removeIcon.classList.add('remove-icon');
+        removeIcon.innerHTML = `<path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`;
+
+        removeIcon.addEventListener('click', () => {
+            this.selectedFiles.splice(index, 1);
+            renderFileList();
+        });
+
+        li.appendChild(span);
+        li.appendChild(removeIcon);
+        fileListEl.appendChild(li);
+    });
+}
+
 function initSingleQuestion() {
     var contentEl = document.querySelector('.gr-content');
     var contentQuestionEl = document.querySelector('.content__question');
@@ -269,6 +300,8 @@ function initSingleQuestion() {
                 </div>
 
                 <div class="content__question-content">${data.content}</div>
+
+                <div style="display: none;" class="content__question-files"></div>
             `;
 
             var userEl = contentEl.querySelector('.content__question-user');
@@ -341,6 +374,52 @@ function initSingleQuestion() {
         }
     }, function (error) {
         console.log("Something went wrong loading question: " + error.code);
+    }).then(res => {
+        // after question is displayed, get and display files
+        firebase.database().ref('/files')
+            .orderByChild('key')
+            .startAt(params.get('key'))
+            .endAt(params.get('key') + "\uf8ff")
+            .once('value')
+            .then(snapshot => {
+                const files = snapshot.val();
+
+                if (files && Object.keys(files) && Object.keys(files).length > 0) {
+                    var questionContentEl = document.querySelector('.content__question-files');
+
+                    questionContentEl.innerHTML = Object.keys(files).map(key => `
+                        <div class="question__file" style="width: 75px; cursor: pointer;">
+                            <img src="${files[key].base64}" alt="${files[key].name}" style="width: 100%;">
+                        </div>
+                    `).join('');
+
+                    questionContentEl.style.display = 'flex';
+
+                    var fileEls = document.querySelectorAll('.question-entry .question__file');
+
+                    if (fileEls && fileEls.length > 0) {
+                        fileEls.forEach(file => {
+                            file.addEventListener('click', ev => {
+                                const modal = document.createElement('div');
+                                modal.classList.add('question__file-modal')
+    
+                                const modalBox = document.createElement('img');
+                                modalBox.src = file.querySelector('img').src;
+                                modalBox.classList.add('question__file-preview');
+    
+                                modal.appendChild(modalBox);
+                                document.body.appendChild(modal);
+    
+                                modal.addEventListener('click', e => {
+                                    if (e.target === modal) {
+                                        document.body.removeChild(modal);
+                                    }
+                                });
+                            });
+                        });
+                    }
+                }
+            });
     });
 
     // todo sort by created desc or asc?
@@ -365,6 +444,11 @@ function initSingleQuestion() {
                 </h4>
 
                 <textarea name="content" rows="4" required></textarea>
+
+                <label id="labelForFiles" for="files" class="gr-btn gr-secondary" style="width: fit-content; text-align: center;">Attach Files</label>
+                <input style="display: none;" type="file" name="files" multiple>
+
+                <ul class="file-list" style="display: none;"></ul>
 
                 <button class="gr-btn gr-primary" type="button">Answer</button>
 
@@ -408,12 +492,34 @@ function initSingleQuestion() {
                         </div>
 
                         <div class="content__question-content">${data[key].content}</div>
+
+                        <div style="display: none;" class="content__question-files"></div>
                     </div>
                 `;
             }).join('');
         }
 
         contentAnswersEl.setHTMLUnsafe(html);
+
+        // attach file logic
+        // logic for file selecting
+        var filesEl = contentAnswersEl.querySelector('input[name="files"]');
+        var fileListEl = contentAnswersEl.querySelector('ul');
+        var filesInputLabelEl = contentAnswersEl.querySelector('#labelForFiles');
+
+        filesInputLabelEl.addEventListener('click', ev => filesEl.click());
+
+        filesEl.addEventListener('change', ev => {
+            const files = Array.from(ev.target.files);
+            this.selectedFiles = selectedFiles.concat(files);
+
+            // clear file input to allow reselecting same file
+            filesEl.value = '';
+
+            renderFileList();
+
+            fileListEl.style.display = 'block';
+        });
 
         // allow moderator users to flag questions
         if (currentUser.superuser) {
@@ -463,8 +569,108 @@ function initSingleQuestion() {
                     // display success message
                     formEl.querySelector('.gr-form__success').style.display = 'block';
                 }
-            });
+
+                return error;
+            }).then(error => {
+                if (!error) {
+                    // save files in questions object
+                    if (this.selectedFiles && this.selectedFiles.length > 0) {
+
+                        // compile all base64 strings 
+                        var filePromises = [];
+                        this.selectedFiles.forEach(file => {
+                            var promise = new Promise((resolve, reject) => {
+                                const reader = new FileReader();
+                                
+                                reader.readAsDataURL(file);
+                                reader.onloadend = () => resolve({
+                                    name: file.name,
+                                    base64: reader.result,
+                                    key: answerKey
+                                });
+                                reader.onerror = reject;
+                            });
+
+                            filePromises.push(promise);
+                        });
+
+                        Promise.all(filePromises)
+                            .then(base64Files => {
+                                var index = 0;
+                                base64Files.forEach(file => {
+                                    firebase.database().ref('files/' + answerKey + '-' + index).set(file, (error) => {
+                                        if (error) {
+                                            console.log('Error uploading file for question > ', answerKey, error);
+                                        }
+                                    });
+                                    index++;
+                                });
+                            });
+
+                        // reset selected files after done
+                        this.selectedFiles = [];
+                        renderFileList();
+                    }
+                }
+            })
         });
+    }).then(res => {
+        var allAnswerEls = document.querySelectorAll('.content__answer');
+
+        if (!allAnswerEls || allAnswerEls.length == 0) {
+            return;
+        }
+
+        allAnswerEls.forEach(answerEl => {
+            if (!answerEl.dataset.key) {
+                return;
+            }
+
+            firebase.database().ref('/files')
+                .orderByChild('key')
+                .startAt(answerEl.dataset.key)
+                .endAt(answerEl.dataset.key + "\uf8ff")
+                .once('value')
+                .then(snapshot => {
+                    const files = snapshot.val();
+
+                    if (files && Object.keys(files) && Object.keys(files).length > 0) {
+                        var answerContentEl = answerEl.querySelector('.content__question-files');
+
+                        answerContentEl.innerHTML = Object.keys(files).map(key => `
+                            <div class="question__file" style="width: 75px; cursor: pointer;">
+                                <img src="${files[key].base64}" alt="${files[key].name}" style="width: 100%;">
+                            </div>
+                        `).join('');
+
+                        answerContentEl.style.display = 'flex';
+
+                        var fileEls = document.querySelectorAll('.content__answers .question__file');
+
+                        if (fileEls && fileEls.length > 0) {
+                            fileEls.forEach(file => {
+                                file.addEventListener('click', ev => {
+                                    const modal = document.createElement('div');
+                                    modal.classList.add('question__file-modal')
+    
+                                    const modalBox = document.createElement('img');
+                                    modalBox.src = file.querySelector('img').src;
+                                    modalBox.classList.add('question__file-preview');
+    
+                                    modal.appendChild(modalBox);
+                                    document.body.appendChild(modal);
+    
+                                    modal.addEventListener('click', e => {
+                                        if (e.target === modal) {
+                                            document.body.removeChild(modal);
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    }
+                });
+        });        
     });
 }
 

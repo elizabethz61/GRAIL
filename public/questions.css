@@ -142,7 +142,13 @@
     margin: 0;
 }
 
-.content__answer-form .gr-btn {
+.content__answer-form .gr-btn.gr-primary {
     width: fit-content;
     align-self: flex-end;
+}
+
+.content__question-files {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
 }

@@ -301,6 +301,9 @@ function initQuestionBoxes() {
             var subjectEl = form.querySelector("select[name='subject']");
             var courseEl = form.querySelector("select[name='course']");
             var contentEl = form.querySelector("textarea[name='content']");
+            var filesEl = form.querySelector('input[name="files"]');
+            var fileListEl = form.querySelector('ul');
+            var filesInputLabelEl = form.querySelector('#labelForFiles');
 
             var formEls = [
                 titleEl,
@@ -313,6 +316,50 @@ function initQuestionBoxes() {
                 formEl.addEventListener('change', ev => {
                     formEl.nextElementSibling.style.display = formEl.checkValidity() ? 'none' : 'block';
                 });
+            });
+
+            // logic for file selecting
+            var selectedFiles = [];
+
+            function renderFileList() {
+                fileListEl.innerHTML = '';
+                
+                selectedFiles.forEach((file, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'file-item';
+
+                    const span = document.createElement('span');
+                    span.className = 'file-name';
+                    span.textContent = file.name;
+
+                    const removeIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    removeIcon.setAttribute("viewBox", "0 0 24 24");
+                    removeIcon.classList.add('remove-icon');
+                    removeIcon.innerHTML = `<path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`;
+            
+                    removeIcon.addEventListener('click', () => {
+                        selectedFiles.splice(index, 1);
+                        renderFileList();
+                    });
+
+                    li.appendChild(span);
+                    li.appendChild(removeIcon);
+                    fileListEl.appendChild(li);
+                });
+            }
+
+            filesInputLabelEl.addEventListener('click', ev => filesEl.click());
+
+            filesEl.addEventListener('change', ev => {
+                const files = Array.from(ev.target.files);
+                selectedFiles = selectedFiles.concat(files);
+
+                // clear file input to allow reselecting same file
+                filesEl.value = '';
+
+                renderFileList();
+
+                fileListEl.style.display = 'block';
             });
 
             questionSubmitEl.addEventListener('click', ev => {
@@ -329,8 +376,6 @@ function initQuestionBoxes() {
 
                 var currentUser = JSON.parse(localStorage.user);
                 
-                // if form is valid, save question to database
-
                 // create random key for each question
                 var questionKey = Math.random().toString(36).substring(2,7);
 
@@ -369,6 +414,45 @@ function initQuestionBoxes() {
                         form.querySelector('.gr-form__success').style.display = 'block';
                     }
                 });
+
+                // save files in questions object
+                if (selectedFiles && selectedFiles.length > 0) {
+
+                    // compile all base64 strings 
+                    var filePromises = [];
+                    selectedFiles.forEach(file => {
+                        var promise = new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            
+                            reader.readAsDataURL(file);
+                            reader.onloadend = () => resolve({
+                                name: file.name,
+                                base64: reader.result,
+                                key: questionKey
+                            });
+                            reader.onerror = reject;
+                        });
+
+                        filePromises.push(promise);
+                    });
+
+                    Promise.all(filePromises)
+                        .then(base64Files => {
+                            var index = 0;
+                            base64Files.forEach(file => {
+                                firebase.database().ref('files/' + questionKey + '-' + index).set(file, (error) => {
+                                    if (error) {
+                                        console.log('Error uploading file for question > ', questionKey, error);
+                                    }
+                                });
+                                index++;
+                            });
+                        });
+
+                    // reset selected files after done
+                    selectedFiles = [];
+                    renderFileList();
+                }
             });
         });
     }
