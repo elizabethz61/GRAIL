@@ -17,7 +17,7 @@
           { "key": "Permissions-Policy",        "value": "geolocation=(), microphone=(), camera=()" },
           { 
             "key": "Content-Security-Policy",
-            "value": "default-src 'self' https://*.firebaseio.com; script-src 'self' https://www.gstatic.com https://*.firebaseio.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data:; font-src 'self'; connect-src 'self' wss://s-usc1f-nss-2523.firebaseio.com/ https://www.googleapis.com; frame-ancestors 'none';"
+            "value": "default-src 'self' https://*.firebaseio.com; script-src 'self' https://www.gstatic.com https://*.firebaseio.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data:; font-src 'self'; connect-src 'self' wss://s-usc1f-nss-2523.firebaseio.com/ https://www.googleapis.com https://securetoken.googleapis.com; frame-ancestors 'none';"
           }
         ]
       }
