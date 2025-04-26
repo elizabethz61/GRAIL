@@ -1164,3 +1164,8 @@ body.dark-mode .sidebar a:hover {
         padding: 10px;
     }
 }
+
+body.dark-mode .introjs-tooltip,
+body.dark-mode .introjs-button {
+    color: black !important;
+}
