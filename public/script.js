@@ -95,7 +95,7 @@ function initHeader() {
                     </a>
                 </div>
                 <div class="header__search-container">
-                    <input type="text" class="header__search" placeholder="Search questions...">
+                    <input type="text" class="header__search" placeholder="Search questions..." data-intro="With the search bar, you can search for questions that are similar to yours." data-step="4">
                     <div class="search__results" style="display: none;"></div>
                 </div>
                 <div class="header__actions">
@@ -110,12 +110,15 @@ function initHeader() {
                             <li><a href="about">About</a></li>
                         </ul>
                     </nav>
-                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode" data-intro="Toggle light and dark mode here." data-step="3">
                         <span class="dark-mode-toggle__icon">🌙</span>
                     </button>
                     ${ currentUser 
-                        ? `<a class="gr-profile" href="profile">${profilePic ? `<img src="${profilePic}" alt="Profile Pic">` : currentUser.username[0].toUpperCase()}</a>` 
-                        : ''
+                        ? `
+                            <a class="gr-profile" href="profile" data-intro="Here is your profile where you can update your profile picture, profile information, and more." data-step="2">
+                                ${profilePic ? `<img src="${profilePic}" alt="Profile Pic">` : currentUser.username[0].toUpperCase()}
+                            </a>
+                        ` : ''
                     }
                 </div>
             </div>
@@ -138,8 +141,6 @@ function initHeader() {
 
             if (imageData && imageData.src) {
                 localStorage.setItem('profilePic', JSON.stringify(imageData));
-
-                var profileImgEl = headerEl.querySelector('.gr-profile');
 
                 if (profileImgEl) {
                     profileImgEl.innerHTML = `<img src="${imageData.src}" alt="Profile Pic">`;
@@ -252,36 +253,38 @@ function initSidebar() {
     // its pretty much the same data just filtered on
     // only the current users questions or only the unsolved questions, etc
     var sidebarHtml =  `
-        <a href="index" ${ 
-            (!!window.location.href 
-            && window.location.href.indexOf('index') > -1)
-            || (window.location.pathname == '/')
-            ? `class="selected"` : ''}>Home</a>
-        <a href="questions?where=myquestions" ${ 
-            !!window.location.href 
-            && window.location.href.indexOf('questions') > -1 
-            && params.get("where")
-            && params.get("where") == 'myquestions' ? `class="selected"` : ''}>Questions</a>
-        <a href="answers"${ 
-            !!window.location.href 
-            && window.location.href.indexOf('answers') > -1 ? `class="selected"` : ''}>Participation</a>
-        <a href="questions?where=unsolved"${ 
-            !!window.location.href 
-            && window.location.href.indexOf('questions') > -1 
-            && params.get("where")
-            && params.get("where") == 'unsolved' ? `class="selected"` : ''}>Unsolved</a>
-        <a href="questions?where=solved"${ 
-            !!window.location.href 
-            && window.location.href.indexOf('questions') > -1 
-            && params.get("where")
-            && params.get("where") == 'solved' ? `class="selected"` : ''}>Solved</a>
-        <a href="questions?where=all"${ 
-            !!window.location.href 
-            && window.location.href.indexOf('questions') > -1 
-            && (
-                !params.get("where")
-                || params.get("where") == 'all'
-            ) ? `class="selected"` : ''}>All</a>
+        <div class="gr-sidebar-content" data-intro="This is your main navigation. Click here to browse questions and answers." data-step="1">
+            <a href="index" ${ 
+                (!!window.location.href 
+                && window.location.href.indexOf('index') > -1)
+                || (window.location.pathname == '/')
+                ? `class="selected"` : ''}>Home</a>
+            <a href="questions?where=myquestions" ${ 
+                !!window.location.href 
+                && window.location.href.indexOf('questions') > -1 
+                && params.get("where")
+                && params.get("where") == 'myquestions' ? `class="selected"` : ''}>Questions</a>
+            <a href="answers"${ 
+                !!window.location.href 
+                && window.location.href.indexOf('answers') > -1 ? `class="selected"` : ''}>Participation</a>
+            <a href="questions?where=unsolved"${ 
+                !!window.location.href 
+                && window.location.href.indexOf('questions') > -1 
+                && params.get("where")
+                && params.get("where") == 'unsolved' ? `class="selected"` : ''}>Unsolved</a>
+            <a href="questions?where=solved"${ 
+                !!window.location.href 
+                && window.location.href.indexOf('questions') > -1 
+                && params.get("where")
+                && params.get("where") == 'solved' ? `class="selected"` : ''}>Solved</a>
+            <a href="questions?where=all"${ 
+                !!window.location.href 
+                && window.location.href.indexOf('questions') > -1 
+                && (
+                    !params.get("where")
+                    || params.get("where") == 'all'
+                ) ? `class="selected"` : ''}>All</a>
+        </div>
     `;
 
     var sidebarEl = document.querySelector('.gr-sidebar');
@@ -814,6 +817,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // also takes care of issue when dark mode tries to load before the header menu exists
     initDarkMode();
 
+    var currentUser = localStorage.getItem('user') ? localStorage.getItem('user') : null;
+
     // check user status
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
@@ -864,4 +869,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.href.indexOf('index') > -1) {
         initQuestions();
     }
+
+    setTimeout(() => {
+        if (!localStorage.getItem('tour-shown') && currentUser) {
+            introJs().setOptions({
+                showBullets: false,
+                exitOnOverlayClick: false,
+                nextLabel: 'Next →',
+                prevLabel: '← Back',
+                doneLabel: 'Got it!'
+            }).start();
+            
+            localStorage.setItem('tour-shown', '1');
+        }
+    }, 500); // give everthing else time to load
 });
