@@ -91,7 +91,7 @@ function initHeader() {
             <div class="header__content">
                 <div class="logo">
                     <a href="index">
-                        <img src="images/placeholder-logo.png" alt="GRAIL Logo">
+                        <img src="images/grail.png" alt="GRAIL Logo">
                     </a>
                 </div>
                 <div class="header__search-container">
