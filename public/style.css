@@ -946,6 +946,11 @@ body.dark-mode .sidebar a:hover {
         overflow-x: auto; /* Allow horizontal scroll if needed */
     }
 
+    .gr-sidebar-content {
+        display: flex;
+        flex-direction: row;
+    }
+
     body.dark-mode .sidebar {
         background-color: #1e1e1e; /* Dark mode background */
     }
